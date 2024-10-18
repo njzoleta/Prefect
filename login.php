@@ -76,7 +76,7 @@ $conn->close();
     <meta name="description" content="Prefect Management System.">
     <link href="assets/css/login.css" rel="stylesheet">
 
-    <title>Login - CMS</title>
+    <title>Login - Prefect</title>
 </head>
 
 <body>
