@@ -19,7 +19,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
 
-      <a href="index.php" class="logo d-flex align-items-center">
+      <a href="admin.php" class="logo d-flex align-items-center">
         <img src="logo.png" alt="">
           <span class="d-none d-lg-block">Prefect Department</span>
       </a>
@@ -62,7 +62,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.php">
+        <a class="nav-link " href="admin.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -155,7 +155,7 @@
 
    
       <li class="nav-item">
-        <a class="nav-link " id="logout" href="/logout.php">
+        <a class="nav-link " id="logout" href="logout.php">
           <i class="bi bi-grid"></i>
           <span>SIGN OUT</span>
         </a>
@@ -171,7 +171,7 @@
       <h1>MINOR OFFENCES</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
           <li class="breadcrumb-item active">Offences</li>
           <li class="breadcrumb-item active">Minor Offences</li>
         </ol>

@@ -2,7 +2,7 @@
 $servername = "localhost"; 
 $username = "root"; 
 $password = ""; 
-$dbname = "bcp_sms3_prefect"; 
+$dbname = "pref_bcp_sms3"; 
 
 
 $connect = new mysqli($servername, $username, $password, $dbname);

@@ -19,7 +19,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
 
-      <a href="index.php" class="logo d-flex align-items-center">
+      <a href="admin.php" class="logo d-flex align-items-center">
         <img src="logo.png" alt="">
           <span class="d-none d-lg-block">Prefect Department</span>
       </a>
@@ -62,7 +62,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.php">
+        <a class="nav-link " href="admin.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -162,13 +162,12 @@
       </li>
   </aside>
 
-
   <main id="main" class="main">
     <div class="pagetitle">
       <h1 class="dashboard">Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
         <li class="breadcrumb-item active">Report / History</li>
         <li class="breadcrumb-item active">Case Report</li>
         </ol>

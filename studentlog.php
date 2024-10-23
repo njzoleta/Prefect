@@ -83,7 +83,7 @@ $result = mysqli_query($connect, $query);
   <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
 
-      <a href="index.php" class="logo d-flex align-items-center">
+      <a href="admin.php" class="logo d-flex align-items-center">
         <img src="logo.png" alt="">
           <span class="d-none d-lg-block">Prefect Department</span>
       </a>
@@ -126,7 +126,7 @@ $result = mysqli_query($connect, $query);
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.php">
+        <a class="nav-link " href="admin.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -233,7 +233,7 @@ $result = mysqli_query($connect, $query);
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
@@ -412,12 +412,8 @@ if (mysqli_num_rows($result) > 0) {
 <script>
     // Populate the Edit Modal with the selected student's data
     $(document).on('click', '.editBtn', function() {
-        $('#editAccount_Id').val($(this).data('Account_Id'));
-        $('#editName').val($(this).data('Fullname'));
-        $('#editYear').val($(this).data('Year'));
-        $('#editCourse').val($(this).data('Course'));
-        $('#editPassword').val($(this).data('Password'))
-        $('#editUser_Type').val($(this).data('Usertype'));
+        $('#editAccount_Id').val($(this).data('minorId'));
+        $('#editName').val($(this).data('minor'));
         $('#editModal').modal('show');
     });
 </script>
