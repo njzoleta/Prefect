@@ -6,9 +6,9 @@ $dbname = "pref_bcp_sms3";
 
 
 $connect = new mysqli($servername, $username, $password, $dbname);
+$mysqli = new mysqli($servername, $username, $password, $dbname);
 
-
-if ($connect->connect_error) {
-    die("Connection failed: " . $connect->connect_error);
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
 ?>

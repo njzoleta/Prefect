@@ -1,3 +1,60 @@
+<?php
+  session_start();
+  include('connect.php');
+  include('checklog.php');
+  check_login();
+
+$minorId = $minor = '';
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $action = $_POST['action'];
+
+    if ($action == 'create' || $action == 'update') {
+        $minorId = $_POST['minorId'];
+        $minor = $_POST['minor'];
+
+        if ($action == 'create') {
+            // Fixed INSERT query
+            $stmt = $connect->prepare("INSERT INTO bcp_sms3_minor (minorId, minor) VALUES (?, ?)");
+            $stmt->bind_param("ss", $minorId, $minor);
+            if ($stmt->execute()) {
+                echo "<script>alert('Minor rules added successfully!');</script>";
+            } else {
+                $errors[] = "Error adding minor rule.";
+            }
+            $stmt->close();
+        }
+
+        if ($action == 'update') {
+            // Fixed UPDATE query
+            $stmt = $connect->prepare("UPDATE bcp_sms3_minor SET minor=? WHERE minorId=?");
+            $stmt->bind_param("ss", $minor, $minorId);
+            if ($stmt->execute()) {
+                echo "<script>alert('Account updated successfully!');</script>";
+            } else {
+                $errors[] = "Error updating account.";
+            }
+            $stmt->close();
+        }
+    }
+
+    if ($action == 'delete') {
+        $minorId = $_POST['minorId'];
+        $stmt = $connect->prepare("DELETE FROM bcp_sms3_minor WHERE minorId = ?");
+        $stmt->bind_param("s", $minorId);
+        if ($stmt->execute()) {
+            echo "<script>alert('Account deleted successfully!');</script>";
+        } else {
+            $errors[] = "Error deleting account.";
+        }
+        $stmt->close();
+    }
+}
+
+$query = "SELECT minorId, minor FROM bcp_sms3_minor";
+$result = mysqli_query($connect, $query);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,202 +73,162 @@
 <body>
 
 
-  <header id="header" class="header fixed-top d-flex align-items-center">
-  <div class="d-flex align-items-center justify-content-between">
-
-      <a href="admin.php" class="logo d-flex align-items-center">
-        <img src="logo.png" alt="">
-          <span class="d-none d-lg-block">Prefect Department</span>
-      </a>
-
-    <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div>
-
-    <nav class="header-nav ms-auto">
-    <ul class="d-flex align-items-center">
-    <li class="nav-item d-block d-lg-none">
-    <a class="nav-link nav-icon search-bar-toggle " href="#">
-    <i class="bi bi-search"></i>
-    </a>
-
-    <li class="nav-item dropdown">
-    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-    <i class="bi bi-bell"></i>
-    <span class="badge bg-primary badge-number">4</span>
-    </a>
-
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-
-            <li class="dropdown-header">
-              You have 4 new notifications
-            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-            </li>
-
-    <li>
-    <hr class="dropdown-divider">
-    </li>
-    </ul>
-    </li>
-    </nav> 
-        </div>
-    </div>
-  </header>
-
-  <aside id="sidebar" class="sidebar">
-
-    <ul class="sidebar-nav" id="sidebar-nav">
-
-      <li class="nav-item">
-        <a class="nav-link " href="admin.php">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Student Information</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="Seniorhigh.php">
-              <i class="bi bi-circle"></i><span>SENIOR HIGHSCHOOL</span>
-            </a>
-          </li>
-          <li>
-            <a href="College.php">
-              <i class="bi bi-circle"></i><span>COLLEGE</span>
-            </a>
-          </li>
- 
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>Offences</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="Minor.php">
-              <i class="bi bi-circle"></i><span>MINOR OFFENCES</span>
-            </a>
-          </li>
-          <li>
-            <a href="Major.php">
-              <i class="bi bi-circle"></i><span>MAJOR OFFENCES</span>
-            </a>
-          </li>
-          <li>
-            <a href="Grave.php">
-              <i class="bi bi-circle"></i><span>GRAVE OFFENCES</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-layout-text-window-reverse"></i><span>Prefect information</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="conduct.php">
-              <i class="bi bi-circle"></i><span>Student Conduct</span>
-            </a>
-          </li>
-          <li>
-            <a href="faq.php">
-              <i class="bi bi-circle"></i><span>FAQ</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-bar-chart"></i><span>Reports/History</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="incidentlog.php">
-              <i class="bi bi-circle"></i><span>Incident History Log</span>
-            </a>
-          </li>
-          <li>
-            <a href="report.php">
-              <i class="bi bi-circle"></i><span>Case report</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link " href="studentlog.php">
-          <i class="bi bi-grid"></i>
-          <span>Register</span>
-        </a>
-      </li>
-
-   
-      <li class="nav-item">
-        <a class="nav-link " id="logout" href="logout.php">
-          <i class="bi bi-grid"></i>
-          <span>SIGN OUT</span>
-        </a>
-      </li>
-  </aside>
+<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
 
 
-  </aside><!-- End Sidebar-->
+<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
 
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>MINOR OFFENCES</h1>
+      <h1>Minor Offence</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
           <li class="breadcrumb-item active">Offences</li>
-          <li class="breadcrumb-item active">Minor Offences</li>
+          <li class="breadcrumb-item actxive">Minor Offence</li>
         </ol>
       </nav>
-    </div><!-- End Page Title -->
-    <div class="container">
-        <h1 class="mt-4">4.1 MINOR OFFENSES</h1>
-        <p>Those offenses not included in the foregoing violations shall be considered minor ones which merit suspension, warning, reprimand, or a disciplinary penalty fixed by the school. However, violation of any of the minor offenses enumerated below for two (2) consecutive times shall be penalized with sanctions as provided under the major offenses.</p>
-        
-        <ul class="list-group">
-            <li class="list-group-item">4.1.1 Not wearing a school ID card</li>
-            <li class="list-group-item">4.1.2 Eating inside the classroom, chewing bubble gums</li>
-            <li class="list-group-item">4.1.3 Loitering near the gate or any act that may block the flow of human traffic</li>
-            <li class="list-group-item">4.1.4 Public Display of Affection</li>
-            <li class="list-group-item">4.1.5 Unauthorized posting or use of banners</li>
-            <li class="list-group-item">4.1.6 Spitting on the floor or any act that creates unsanitary conditions</li>
-            <li class="list-group-item">4.1.7 Improper haircut, dyeing of hair, or wearing inappropriate accessories</li>
-            <li class="list-group-item">4.1.8 Entering faculty restrooms without consent</li>
-            <li class="list-group-item">4.1.9 Male students entering female comfort rooms or vice versa</li>
-            <li class="list-group-item">4.1.10 Unhygienic use of college facilities</li>
-            <li class="list-group-item">4.1.11 Bringing in pointed objects</li>
-            <li class="list-group-item">4.1.12 Refusal to submit to lawful inspection</li>
-            <li class="list-group-item">4.1.13 Using lewd gestures to provoke others</li>
-            <li class="list-group-item">4.1.14 Charging cellphones and gadgets inside classrooms and hallways</li>
-        </ul>
     </div>
   
+    <p>4.1 MINOR OFFENSE</p>
+    <p>Those offenses not included in the foregoing violations shall be considered minor ones which merit suspension, warning, reprimand, or a disciplinary penalty fixed by the school. However, violation of any of the minor offenses enumerated below for two (2) 
+    consecutive times shall be penalized with sanctions as provided under the major offenses.</p>
 
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>Prefect Department</span></strong>. All Rights Reserved
+    <div class="container mt-5">
+            <div class="text-bottom mb-2">
+
+
+                <div class="position-relative">
+                <table class="table table-bordered ">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>OFFENSE CODE</th>
+                        <th>Action</th>
+                      
+                    </tr>
+                    </thead>
+                    </div>  
+
+
+                    <tbody>
+                    <?php
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>
+                <td>{$row['minor']}</td>
+                <td>
+                    <button class='btn btn-warning btn-sm editBtn' 
+                        data-minor='{$row['minor']}' 
+                    <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure?\");'>
+                        <input type='hidden' name='minorId' value='{$row['minorId']}'>
+                        <input type='hidden' name='action' value='delete'>
+                        <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+                    </form>
+                </td>
+              </tr>";
+    }
+} else {
+    echo "<tr><td colspan='6' class='text-center'>No accounts found</td></tr>";
+}
+?>
+</tbody>
+</table>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">Add Student</button>
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Add Account</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="create">
+                    <div class="form-group">
+                        <label>Account ID</label>
+                        <input type="text" name="minor" class="form-control" required>
+                        <span class="text-danger"><?php echo $minorIderr; ?></span>
+                    </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add minor Rules</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="credits">
-    <a href="">Prefect Department</a>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Account</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="update">
+                    <div class="form-group">
+                        <label>Offence</label>
+                        <input type="text" name="minor" id="editminor" class="form-control" required>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update Account</button>
+                </div>
+            </form>
+</main>
+  
+
+<?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+
+
+  <?php if (!empty($errors)): ?>
+    <div class="alert alert-danger">
+        <?php foreach ($errors as $error): ?>
+            <p><?php echo $error; ?></p>
+        <?php endforeach; ?>
     </div>
-  </footer><!-- End Footer -->
+<?php endif; ?>
 
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+    // jQuery script to show the edit modal
+    $(document).on('click', '.editBtn', function() {
+        $('#editAccountId').val($(this).data('minorid'));
+        $('#editminor').val($(this).data('minor'));
+        $('#editModal').modal('show');
+    });
+  </script>
+<script>
+    document.getElementById("add-report-btn").addEventListener("click", function() {
+        document.getElementById("report-modal").style.display = "block";
+    });
+    
+    
+    var modals = document.getElementsByClassName("modal");
+    for (var i = 0; i < modals.length; i++) {
+        var modal = modals[i];
+        var closeBtn = modal.getElementsByClassName("close")[0];
+        modal.addEventListener("click", function(event) {
+            if (event.target == this || event.target == closeBtn) {
+                this.style.display = "none";
+            }
+        });
+    }
+        </script>
 
 
 

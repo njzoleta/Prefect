@@ -4,66 +4,67 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "pref_bcp_sms3";
-
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include('connect.php');
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['Account_Id']) && isset($_POST['Password'])) {
+    if (isset($_POST['AccountId']) && isset($_POST['Password'])) { 
+        $AccountId = $connect->real_escape_string($_POST['AccountId']);
+        $Password = $_POST['Password']; 
 
-        $Account_Id = $conn->real_escape_string($_POST['Account_Id']);
-        $Password = $conn->real_escape_string($_POST['Password']);
-
- 
-        $stmt = $conn->prepare("SELECT * FROM bcp_sms3_register WHERE Account_Id = ? AND Password = ? AND User_type = 1");
-        $stmt->bind_param('ss', $Account_Id, $Password);
+        // Check admin credentials
+        $stmt = $connect->prepare("SELECT AccountId, Password FROM bcp_sms3_admin WHERE AccountId = ?");
+        if (!$stmt) {
+            die("Prepare failed: " . $connect->error);
+        }
+        $stmt->bind_param('s', $AccountId);
         $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $_SESSION['Account_Id'] = $Account_Id;
-            $_SESSION['User_Type'] = '1'; 
-            header("Location: admin.php"); 
+        $stmt->bind_result($dbAccountId, $dbPassword);
+        $stmt->fetch();
+        
+        if ($dbAccountId && password_verify($Password, $dbPassword)) {
+            // Successful admin login
+            $_SESSION['AccountId'] = $dbAccountId;
+            $_SESSION['User'] = '1'; 
+            session_regenerate_id(true);
+            header("Location: admin.php");
             exit();
         }
 
-    
-        $stmt = $conn->prepare("SELECT * FROM bcp_sms3_register WHERE Account_Id = ? AND Password = ? AND User_type = 2");
-        $stmt->bind_param('ss', $Account_Id, $Password);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $stmt->close();
 
-        if ($result->num_rows > 0) {
-            $_SESSION['Account_Id'] = $Account_Id;
-            $_SESSION['User_Type'] = '2'; 
-            header("Location: user.php"); 
+
+        $stmt = $connect->prepare("SELECT AccountId, Password FROM bcp_sms3_user WHERE AccountId = ?");
+        if (!$stmt) {
+            die("Prepare failed: " . $connect->error);
+        }
+        $stmt->bind_param('s', $AccountId);
+        $stmt->execute();
+        $stmt->bind_result($dbAccountId, $dbPassword);
+        $stmt->fetch();
+        
+        if ($dbAccountId && password_verify($Password, $dbPassword)) {
+            // Successful user login
+            $_SESSION['AccountId'] = $dbAccountId;
+            $_SESSION['User  '] = '2'; // Removed trailing space
+            session_regenerate_id(true); // Prevent session fixation
+            header("Location: user.php");
             exit();
         }
 
-   
-        $error = "Invalid Account ID or Password.";
+        $error = "Invalid Account ID or Password";
+        $stmt->close();
     } else {
-        $error = "Please enter both Account ID and Password.";
+        $error = "Please enter both Account ID and Password";
     }
 }
 
-$conn->close();
+$connect->close();
 ?>
 
-
-<?php if (!empty($error)): ?>
-    <p style="color: red;"><?php echo $error; ?></p>
+<?php if ($error): ?>
+    <div class="error"><?php echo htmlspecialchars($error); ?></div>
 <?php endif; ?>
 
 
@@ -75,10 +76,8 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Prefect Management System.">
     <link href="assets/css/login.css" rel="stylesheet">
-
     <title>Login - Prefect</title>
 </head>
-
 <body>
     <div class="logo">
         <img src="logo.png" alt="Logo">
@@ -87,16 +86,19 @@ $conn->close();
     
     <div class="login-container">
         <h2>Log Into Your Account</h2>
- 
-                <div class="error-message" style="color: red;">
-                    <?= $error ?>
+        
+        <?php if (!empty($error)): ?>
+            <div class="error-message" style="color: red;">
+                <?= htmlspecialchars($error) ?>
+            </div>
+        <?php endif; ?>
 
-        <form id="loginForm" action="" method="post">
-            <label for="Account_Id">Account ID</label>
-            <input type="number" id="Account_Id" name="Account_Id" required aria-label="Account_ID">
+        <form id="loginForm" method="post">
+            <label for="AccountId">Account ID</label>
+            <input type="number" id="AccountId" name="AccountId" required aria-label="Account Id">
 
             <label for="Password">Password</label>
-            <input type="Password" id="Password" name="Password" required aria-label="Password">
+            <input type="password" id="Password" name="Password" required aria-label="Password">
 
             <button type="submit">LOGIN</button>
         </form>
