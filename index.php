@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_result($dbAccountId, $dbpassword);
         $stmt->fetch();
         
-        if ($dbAccountId && password_verify($password, $dbpassword)) {
+        if ($dbAccountId && $password === $dbpassword)  {
 
             $_SESSION['AccountId'] = $dbAccountId;
             $_SESSION['admin'] = '1'; 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_result($dbAccountId, $dbpassword);
         $stmt->fetch();
         
-        if ($dbAccountId && password_verify($password, $dbpassword)) {
+        if ($dbAccountId && $password === $dbpassword) {
             $_SESSION['AccountId'] = $dbAccountId;
             $_SESSION['user'] = '2';
             session_regenerate_id(true);
@@ -94,7 +94,7 @@ $connect->close();
 
         <form id="loginForm" method="post">
             <label for="AccountId">Account ID</label>
-            <input type="number" id="AccountId" name="AccountId" required aria-label="Account Id">
+            <input type="number" id="AccountId" name="AccountId" required aria-label="AccountId">
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required aria-label="password">

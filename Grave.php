@@ -115,17 +115,19 @@ $result = mysqli_query($connect, $query);
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>
-                <td>{$row['grave']}</td>
-                <td>
-                    <button class='btn btn-warning btn-sm editBtn' 
-                        data-grave='{$row['grave']}' 
-                    <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure?\");'>
-                        <input type='hidden' name='graveId' value='{$row['graveId']}'>
-                        <input type='hidden' name='action' value='delete'>
-                        <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
-                    </form>
-                </td>
-              </tr>";
+        <td>{$row['grave']}</td>
+        <td>
+            <button class='btn btn-warning btn-sm editBtn' 
+                data-grave='{$row['grave']}'>
+                Edit
+            </button>
+            <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure you want to delete this?\");'>
+                <input type='hidden' name='graveId' value='{$row['graveId']}'>
+                <input type='hidden' name='action' value='delete'>
+                <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+            </form>
+        </td>
+      </tr>";
     }
 } else {
     echo "<tr><td colspan='6' class='text-center'>No accounts found</td></tr>";
@@ -133,7 +135,7 @@ if (mysqli_num_rows($result) > 0) {
 ?>
 </tbody>
 </table>
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">Add Rules</button>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">Add Grave Rules</button>
 
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

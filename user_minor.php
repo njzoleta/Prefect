@@ -3,6 +3,12 @@ session_start();
   include('connect.php');
   include('checklog.php');
   check_login();
+
+  $query = "SELECT minorId, minor FROM bcp_sms3_minor ";
+$result = $mysqli->query($query);
+if (!$result) {
+  die("Query failed: " . $mysqli->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -46,25 +52,36 @@ session_start();
     <div class="container">
         <h1 class="mt-4">4.1 MINOR OFFENSES</h1>
         <p>Those offenses not included in the foregoing violations shall be considered minor ones which merit suspension, warning, reprimand, or a disciplinary penalty fixed by the school. However, violation of any of the minor offenses enumerated below for two (2) consecutive times shall be penalized with sanctions as provided under the major offenses.</p>
-        
-        <ul class="list-group">
-            <li class="list-group-item">4.1.1 Not wearing a school ID card</li>
-            <li class="list-group-item">4.1.2 Eating inside the classroom, chewing bubble gums</li>
-            <li class="list-group-item">4.1.3 Loitering near the gate or any act that may block the flow of human traffic</li>
-            <li class="list-group-item">4.1.4 Public Display of Affection</li>
-            <li class="list-group-item">4.1.5 Unauthorized posting or use of banners</li>
-            <li class="list-group-item">4.1.6 Spitting on the floor or any act that creates unsanitary conditions</li>
-            <li class="list-group-item">4.1.7 Improper haircut, dyeing of hair, or wearing inappropriate accessories</li>
-            <li class="list-group-item">4.1.8 Entering faculty restrooms without consent</li>
-            <li class="list-group-item">4.1.9 Male students entering female comfort rooms or vice versa</li>
-            <li class="list-group-item">4.1.10 Unhygienic use of college facilities</li>
-            <li class="list-group-item">4.1.11 Bringing in pointed objects</li>
-            <li class="list-group-item">4.1.12 Refusal to submit to lawful inspection</li>
-            <li class="list-group-item">4.1.13 Using lewd gestures to provoke others</li>
-            <li class="list-group-item">4.1.14 Charging cellphones and gadgets inside classrooms and hallways</li>
-        </ul>
-    </div>
-  
+        <div class="card-body">
+     
+     <div class="table-responsive">
+       <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+         <thead>
+           <tr>
+             <th>#</th>
+             <th>Rules</th>
+           </tr>
+         </thead>
+         <tbody>
+         <?php
+
+         $ret="SELECT * FROM bcp_sms3_minor "; 
+         $stmt= $mysqli->prepare($ret) ;
+         $stmt->execute() ;
+         $res=$stmt->get_result();
+         $cnt=1;
+         while($row=$res->fetch_object())
+         {
+         ?>
+               <tr>
+                 <td><?php echo $cnt++; ?></td>
+                 <td><?php echo $row->minor; ?></td>
+           <?php } ?>
+         </tbody>
+       </table>
+     </div>
+   </div>    
+         </main>
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">

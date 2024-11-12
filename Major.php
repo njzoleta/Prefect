@@ -116,17 +116,20 @@ $result = mysqli_query($connect, $query);
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>
-                <td>{$row['major']}</td>
-                <td>
-                    <button class='btn btn-warning btn-sm editBtn' 
-                        data-minor='{$row['major']}' 
-                    <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure?\");'>
-                        <input type='hidden' name='majorId' value='{$row['majorId']}'>
-                        <input type='hidden' name='action' value='delete'>
-                        <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
-                    </form>
-                </td>
-              </tr>";
+        <td>{$row['major']}</td>
+        <td>
+            <button class='btn btn-warning btn-sm editBtn' 
+                data-major='{$row['major']}'>
+                Edit
+            </button>
+            <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure you want to delete this?\");'>
+                <input type='hidden' name='majorId' value='{$row['majorId']}'>
+                <input type='hidden' name='action' value='delete'>
+                <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+            </form>
+        </td>
+      </tr>";
+
     }
 } else {
     echo "<tr><td colspan='6' class='text-center'>No Rules found</td></tr>";
@@ -151,7 +154,7 @@ if (mysqli_num_rows($result) > 0) {
                     <div class="form-group">
                         <label>Rules Id</label>
                         <input type="text" name="minor" class="form-control" required>
-                        <span class="text-danger"><?php echo $majorIderr; ?></span>
+                        <span class="text-danger"><?php echo $majorId; ?></span>
                     </div>
                     </div>
                 </div>

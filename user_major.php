@@ -3,6 +3,11 @@ session_start();
   include('connect.php');
   include('checklog.php');
   check_login();
+  $query = "SELECT majorId, major FROM bcp_sms3_major ";
+  $result = $mysqli->query($query);
+  if (!$result) {
+    die("Query failed: " . $mysqli->error);
+  }
 ?>
 
 <!DOCTYPE html>
@@ -47,27 +52,34 @@ session_start();
       <p contenteditable="true" id="intro-text">Those that immediately call for a meeting with the parents. Temporary holding of a student while awaiting for 
           the arrival of his parent or guardian may be imposed without any prior warning.</p>
       
-      <ul class="list-group" id="offenses-list">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span class="offense-text">4.1.2.1 Unauthorized bringing out of chairs, tables, books, and other school facilities/equipment</span>
-              <button class="btn btn-sm btn-outline-primary edit-btn">Edit</button>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span class="offense-text">4.1.2.2 Smoking within the Campus.</span>
-              <button class="btn btn-sm btn-outline-primary edit-btn">Edit</button>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span class="offense-text">4.1.2.3 Excessive public display of affection e.g. kissing, hugging, necking, petting, and the like.</span>
-              <button class="btn btn-sm btn-outline-primary edit-btn">Edit</button>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span class="offense-text">4.1.2.4 Possession, distribution or perusal of pornographic materials.</span>
-              <button class="btn btn-sm btn-outline-primary edit-btn">Edit</button>
-          </li>
-      </ul>
+          <div class="table-responsive">
+       <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+         <thead>
+           <tr>
+             <th>#</th>
+             <th>Rules</th>
+           </tr>
+         </thead>
+         <tbody>
+         <?php
 
-      <button class="btn btn-primary mt-3" id="add-item-btn">Add Offense</button>
-  </div>
+         $ret="SELECT * FROM bcp_sms3_major "; 
+         $stmt= $mysqli->prepare($ret) ;
+         $stmt->execute() ;
+         $res=$stmt->get_result();
+         $cnt=1;
+         while($row=$res->fetch_object())
+         {
+         ?>
+               <tr>
+                 <td><?php echo $cnt++; ?></td>
+                 <td><?php echo $row->major; ?></td>
+           <?php } ?>
+         </tbody>
+       </table>
+     </div>
+   </div>  
+  </main>  
 
   
 

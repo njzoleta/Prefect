@@ -5,7 +5,7 @@
   check_login();
   if(isset($_POST['addincident']))
     {
-            $Studentnumber=$_POST['Studentnumber'];
+            $Studentnumber_Id=$_POST['Studentnumber_Id'];
             $Nameid=$_POST['Nameid'];
             $yearid = $_POST['yearid'];
             $couseid=$_POST['courseid'];
@@ -14,9 +14,9 @@
             $offencesid=$_POST['offencesid'];
             $evidence=$_POST['evidence'];
             $involve=$_POST['involve'];
-            $query="INSERT INTO `bcp_sms_log`(`Studentnumber`, `Nameid`, `yearid`, `courseid`, `sectionid`, `severityid`, `offencesid`, `evidence`, `involve`,) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]','[value-8]','[value-9]')";
+            $query="INSERT INTO `bcp_sms_log`(`Studentnumber_Id`, `Nameid`, `yearid`, `courseid`, `sectionid`, `severityid`, `offencesid`, `evidence`, `involve`,) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]','[value-8]','[value-9]')";
             $stmt = $mysqli->prepare($query);
-            $rc=$stmt->bind_param('ssssssssss', $Studentnumber, $Nameid, $yearid, $couseid , $sectionid, $severityid , $offencesid , $evidence , $involve);
+            $rc=$stmt->bind_param('ssssssssss', $Studentnumber_Id, $Nameid, $yearid, $couseid , $sectionid, $severityid , $offencesid , $evidence , $involve);
             $stmt->execute();
                 if($stmt)
                 {
@@ -63,8 +63,8 @@
     <!-- Add User Form -->
     <form method="POST"> 
       <div class="form-group">
-          <label for="StudentNumber">Student Number</label>
-          <input type="text" required class="form-control" id="StudentNumber" name="StudentNumber">
+          <label for="Studentnumber_Id">Student Number</label>
+          <input type="text" required class="form-control" id="Studentnumber_Id" name="Studentnumber_Id">
       </div>
       <div class="form-group">
           <label for="NameId">Full Name</label>

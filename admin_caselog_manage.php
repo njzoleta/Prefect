@@ -21,15 +21,13 @@ session_start();
 </head>
 <body>
 
-<!-- ======= Header ======= -->
+<!-- Header -->
 <?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
 <!-- End Header -->
 
-
-<!-- ======= Sidebar ======= -->  
-<?php include('C:\xampp\htdocs\Prefect\inc\sidebar.php'); ?>
-<!-- End Sidebar-->
-
+<!-- Sidebar -->
+<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<!-- End Sidebar -->
 
   <main id="main" class="main">
     <div class="pagetitle">

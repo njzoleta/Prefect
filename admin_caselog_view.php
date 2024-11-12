@@ -4,7 +4,7 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-$query = "SELECT Studentnumber, Nameid, yearid, courseid, sectionid FROM bcp_sms_log";
+$query = "SELECT Studentnumber_Id, Nameid, yearid, courseid, sectionid FROM bcp_sms_log";
 $result = mysqli_query($connect, $query);
 ?>
 
@@ -76,7 +76,7 @@ $result = mysqli_query($connect, $query);
                   ?>
                     <tr>
                       <td><?php echo $cnt++; ?></td>
-                      <td><?php echo $row->Studentnumber; ?></td>
+                      <td><?php echo $row->Studentnumber_Id; ?></td>
                       <td><?php echo $row->nameid; ?></td>
                       <td><?php echo $row->yearid; ?></td>
                       <td><?php echo $row->courseid; ?></td>
