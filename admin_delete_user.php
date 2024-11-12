@@ -1,24 +1,21 @@
 <?php
-  session_start();
-  include('vendor/inc/config.php');
-  include('vendor/inc/checklogin.php');
+session_start();
+  include('connect.php');
+  include('checklog.php');
   check_login();
-  $aid=$_SESSION['a_id'];
-  //Add Booking
-  if(isset($_POST['delete_booking']))
+  $AccountId=$_SESSION['AccountId'];
+
+  if(isset($_POST['delete_User']))
     {
-            $u_id = $_GET['u_id'];
-            //$u_fname=$_POST['u_fname'];
-            //$u_lname = $_POST['u_lname'];
-            //$u_phone=$_POST['u_phone'];
-            //$u_addr=$_POST['u_addr'];
-            $u_car_type = $_POST['u_car_type'];
-            $u_car_regno  = $_POST['u_car_regno'];
-            $u_car_bookdate = $_POST['u_car_bookdate'];
-            $u_car_book_status  = $_POST['u_car_book_status'];
-            $query="update tms_user set u_car_type=?, u_car_regno=?, u_car_bookdate=?,  u_car_book_status=? where u_id=?";
+            $AccountId = $_GET['AccountId'];
+            $AccountId = $_POST['AccountId'];
+            $name = $_POST['name'];
+            $year  = $_POST['year'];
+            $course = $_POST['course'];
+            $section  = $_POST['section'];
+            $query="update tms_user set AccountId=? ,name=?, year=?, course=?,  section=? where AccountId=?";
             $stmt = $mysqli->prepare($query);
-            $rc=$stmt->bind_param('ssssi',  $u_car_type, $u_car_regno, $u_car_bookdate, $u_car_book_status, $u_id);
+            $rc=$stmt->bind_param('sssssi', $AccountId, $name, $year, $course, $section, $AccountId);
             $stmt->execute();
                 if($stmt)
                 {
@@ -33,21 +30,31 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php include('vendor/inc/head.php');?>
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Dashboard</title>
 
-<body id="page-top">
- <!--Start Navigation Bar-->
-  <?php include("vendor/inc/nav.php");?>
-  <!--Navigation Bar-->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
 
-  <div id="wrapper">
+</head>
+<body>
 
-    <!-- Sidebar -->
-    <?php include("vendor/inc/sidebar.php");?>
-    <!--End Sidebar-->
-    <div id="content-wrapper">
+<!-- ======= Header ======= -->
+<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
+<!-- End Header -->
 
-      <div class="container-fluid">
+
+<!-- ======= Sidebar ======= -->  
+<?php include('C:\xampp\htdocs\Prefect\inc\sidebar.php'); ?>
+<!-- End Sidebar-->
+
+
+<main id="main" class="main">
+<div class="pagetitle">
       <?php if(isset($succ)) {?>
                         <!--This code for injecting an alert-->
         <script>
@@ -71,23 +78,31 @@
 
         <?php } ?>
 
-        <!-- Breadcrumbs-->
+        <h1 class="dashboard">Dashboard</h1>
+      <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="#">Bookings</a>
-          </li>
-          <li class="breadcrumb-item active">Approve</li>
+          <li class="breadcrumb-item"><a href="user.php">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active">Dashboard</li>
+
         </ol>
-        <hr>
-        <div class="card">
-        <div class="card-header">
-          Approve Booking
-        </div>
-        <div class="card-body">
+      </nav>
+    </div>   
+
+    <div id="content-wrapper">
+
+      <div class="container-fluid">
+      <div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa-table"></i>
+            Student Incident Log</div>
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+                <div class="card-body">
           <!--Add User Form-->
           <?php
-            $aid=$_GET['u_id'];
-            $ret="select * from tms_user where u_id=?";
+            $AccountId=$_GET['AccountId'];
+            $ret="select * from bcp_sms3_user where AccountId=?";
             $stmt= $mysqli->prepare($ret) ;
             $stmt->bind_param('i',$aid);
             $stmt->execute() ;//ok
@@ -98,54 +113,21 @@
         ?>
           <form method ="POST"> 
             <div class="form-group">
-                <label for="exampleInputEmail1">First Name</label>
-                <input type="text" readonly value="<?php echo $row->u_fname;?>" required class="form-control" id="exampleInputEmail1" name="u_fname">
+                <label for="exampleInputEmail1">Student Number</label>
+                <input type="text" readonly value="<?php echo $row->AccountId;?>" required class="form-control" id="exampleInputEmail1" name="Student Number">
             </div>
             <div class="form-group">
-                <label for="exampleInputEmail1">Last Name</label>
-                <input type="text" readonly  class="form-control" value="<?php echo $row->u_lname;?>" id="exampleInputEmail1" name="u_lname">
+                <label for="exampleInputEmail1">Full Name</label>
+                <input type="text" readonly  class="form-control" value="<?php echo $row->name;?>" id="exampleInputEmail1" name="Fullname">
             </div>
             <div class="form-group">
-                <label for="exampleInputEmail1">Contact</label>
-                <input type="text" readonly class="form-control" value="<?php echo $row->u_phone;?>" id="exampleInputEmail1" name="u_phone">
+                <label for="exampleInputEmail1">Year</label>
+                <input type="text" readonly class="form-control" value="<?php echo $row->year;?>" id="exampleInputEmail1" name="Year">
             </div>
             <div class="form-group">
-                <label for="exampleInputEmail1">Address</label>
-                <input type="text" readonly class="form-control" value="<?php echo $row->u_addr;?>" id="exampleInputEmail1" name="u_addr">
+                <label for="exampleInputEmail1">Course</label>
+                <input type="text" readonly class="form-control" value="<?php echo $row->course;?>" id="exampleInputEmail1" name="Course">
             </div>
-
-            <div class="form-group" style="display:none">
-                <label for="exampleInputEmail1">Category</label>
-                <input type="text" readonly class="form-control" id="exampleInputEmail1" value="User" name="u_category">
-            </div>
-            
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" readonly value="<?php echo $row->u_email;?>" class="form-control" name="u_email"">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleInputEmail1">Vehicle Category</label>
-                <input type="email" readonly placeholder="<?php echo $row->u_car_type;?>" class="form-control" name="u_car_type">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleInputEmail1">Vehicle Registration NUmber</label>
-                <input type="email" readonly placeholder="<?php echo $row->u_car_regno;?>" class="form-control" name="u_car_regno">
-            </div>
-
-        
-            <div class="form-group">
-                <label for="exampleInputEmail1">Booking Date</label>
-                <input type="text" readonly placeholder="<?php echo $row->u_car_bookdate;?>" class="form-control"   name="u_car_bookdate">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleInputEmail1">Booking Status</label>
-                <input type="text" readonly placeholder="<?php echo $row->u_car_book_status;?>" class="form-control" id="exampleInputEmail1"  name="u_car_book_status">
-            </div>
-
-            
 
             <button type="submit" name="delete_booking" class="btn btn-danger">Delete Booking</button>
           </form>

@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -9,24 +8,24 @@ include('connect.php');
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['AccountId']) && isset($_POST['Password'])) { 
+    if (isset($_POST['AccountId']) && isset($_POST['password'])) { 
         $AccountId = $connect->real_escape_string($_POST['AccountId']);
-        $Password = $_POST['Password']; 
+        $password = $_POST['password']; 
 
-        // Check admin credentials
-        $stmt = $connect->prepare("SELECT AccountId, Password FROM bcp_sms3_admin WHERE AccountId = ?");
+
+        $stmt = $connect->prepare("SELECT AccountId, password FROM bcp_sms3_admin WHERE AccountId = ?");
         if (!$stmt) {
             die("Prepare failed: " . $connect->error);
         }
         $stmt->bind_param('s', $AccountId);
         $stmt->execute();
-        $stmt->bind_result($dbAccountId, $dbPassword);
+        $stmt->bind_result($dbAccountId, $dbpassword);
         $stmt->fetch();
         
-        if ($dbAccountId && password_verify($Password, $dbPassword)) {
-            // Successful admin login
+        if ($dbAccountId && password_verify($password, $dbpassword)) {
+
             $_SESSION['AccountId'] = $dbAccountId;
-            $_SESSION['User'] = '1'; 
+            $_SESSION['admin'] = '1'; 
             session_regenerate_id(true);
             header("Location: admin.php");
             exit();
@@ -35,29 +34,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
 
-        $stmt = $connect->prepare("SELECT AccountId, Password FROM bcp_sms3_user WHERE AccountId = ?");
+        $stmt = $connect->prepare("SELECT AccountId, password FROM bcp_sms3_user WHERE AccountId = ?");
         if (!$stmt) {
             die("Prepare failed: " . $connect->error);
         }
         $stmt->bind_param('s', $AccountId);
         $stmt->execute();
-        $stmt->bind_result($dbAccountId, $dbPassword);
+        $stmt->bind_result($dbAccountId, $dbpassword);
         $stmt->fetch();
         
-        if ($dbAccountId && password_verify($Password, $dbPassword)) {
-            // Successful user login
+        if ($dbAccountId && password_verify($password, $dbpassword)) {
             $_SESSION['AccountId'] = $dbAccountId;
-            $_SESSION['User  '] = '2'; // Removed trailing space
-            session_regenerate_id(true); // Prevent session fixation
+            $_SESSION['user'] = '2';
+            session_regenerate_id(true);
             header("Location: user.php");
             exit();
         }
 
-        $error = "Invalid Account ID or Password";
+        $error = "Invalid Account ID or password";
         $stmt->close();
     } else {
-        $error = "Please enter both Account ID and Password";
+        $error = "Please enter both Account ID and password";
     }
+    
 }
 
 $connect->close();
@@ -97,8 +96,8 @@ $connect->close();
             <label for="AccountId">Account ID</label>
             <input type="number" id="AccountId" name="AccountId" required aria-label="Account Id">
 
-            <label for="Password">Password</label>
-            <input type="password" id="Password" name="Password" required aria-label="Password">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required aria-label="password">
 
             <button type="submit">LOGIN</button>
         </form>

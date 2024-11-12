@@ -81,7 +81,7 @@ check_login();
                       <td><?php echo htmlspecialchars($row->section); ?></td>
                       <td>******</td> <!-- Masked Password for Security -->
                       <td>
-                        <a href="admin.php?AccoundId=<?php echo $row->AccountId; ?>" class="badge badge-danger"><i class="fa fa-trash"></i> Delete</a>
+                        <a href="admin_delete_user.php?AccoundId=<?php echo $row->AccountId; ?>" class="badge badge-danger"><i class="fa fa-trash"></i> Delete</a>
                       </td>
                     </tr>
                   <?php } ?>
