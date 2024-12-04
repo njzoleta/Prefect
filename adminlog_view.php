@@ -4,8 +4,8 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-
-$query = "SELECT AccountId, name, year, course, section FROM bcp_sms3_user WHERE category = 'User'";
+// Corrected SQL query
+$query = "SELECT AccountId, name FROM bcp_sms3_admin"; // Removed the extra comma and WHERE clause
 $result = $mysqli->query($query);
 
 if (!$result) {
@@ -19,7 +19,7 @@ if (!$result) {
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Userlog</title>
+  <title>Adminlog</title>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
@@ -37,11 +37,11 @@ if (!$result) {
 
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1 class="dashboard">User Log</h1>
+    <h1 class="dashboard">Admin Log</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-        <li class="breadcrumb-item active">User Log</li>
+        <li class="breadcrumb-item active">Admin Log</li>
         <li class="breadcrumb-item active">View</li>
       </ol>
     </nav>
@@ -50,46 +50,31 @@ if (!$result) {
   <!-- User Log Table -->
   <div class="card mb-3">
     <div class="card-header">
-      <i class="fas fa-table"></i> UserLog View
+      <i class="fas fa-table"></i>AdminLog View
     </div>
     <div class="card-body">
-     
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Student number</th>
-                  <th>Name</th>
-                  <th>Year</th>
-                  <th>Course</th>
-                  <th>Section</th>
-                </tr>
-              </thead>
-              <tbody>
-              <?php
-
-              $ret="SELECT * FROM bcp_sms3_user where AccountId "; 
-              $stmt= $mysqli->prepare($ret) ;
-              $stmt->execute() ;
-              $res=$stmt->get_result();
-              $cnt=1;
-              while($row=$res->fetch_object())
-              {
-              ?>
-                    <tr>
-                      <td><?php echo $cnt++; ?></td>
-                      <td><?php echo $row->AccountId; ?></td>
-                      <td><?php echo $row->name; ?></td>
-                      <td><?php echo $row->year; ?></td>
-                      <td><?php echo $row->course; ?></td>
-                      <td><?php echo $row->section; ?></td>
-                  </tr>
-                <?php } ?>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Id Number</th>
+              <th>Full Name</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php
+          $cnt = 1; // Initialize counter
+          while ($row = $result->fetch_object()) { // Fetching the user data
+          ?>
+            <tr>
+              <td><?php echo $cnt++; ?></td>
+              <td><?php echo $row->AccountId; ?></td>
+              <td><?php echo $row->name; ?></td>
+            </tr>
+          <?php } ?>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

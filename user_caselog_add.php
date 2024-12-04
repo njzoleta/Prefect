@@ -34,12 +34,13 @@
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Dashboard</title>
+    <title>Incident Log</title>
   
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets\css\llog.css">
   
   </head>
   <body>
@@ -52,16 +53,27 @@
   <!-- ======= Sidebar ======= -->  
   <?php include('C:\xampp\htdocs\Prefect\inc\sidebar.php'); ?>
   <!-- End Sidebar-->
+  <main id="main" class="main">
+  <div class="pagetitle">
+    <h1 class="dashboard">Incident Log</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
+        <li class="breadcrumb-item active">Incident Log</li>
+        <li class="breadcrumb-item active">Add</li>
+      </ol>
+    </nav>
+  </div>   
 
-  <hr>
-<div class="card">
-  <div class="card-header">
-    Add  Student Incident
-
-  </div>
+  <div id="content-wrapper">
+    <div class="container-fluid">
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="fas fa-table"></i>Incident Add
+        </div>
   <div class="card-body">
     <!-- Add User Form -->
-    <form method="POST"> 
+    <form method="POST" id="form"> 
       <div class="form-group">
           <label for="Studentnumber_Id">Student Number</label>
           <input type="text" required class="form-control" id="Studentnumber_Id" name="Studentnumber_Id">
@@ -99,12 +111,12 @@
           <input type="text" class="form-control" id="involve" name="involve">
       </div>
 
-      <button type="submit" name="add_user" class="btn btn-success">Add User</button>
+      <button type="submit" name="add_user" class="btn btn-success">Add Violation</button>
     </form>
     <!-- End Form -->
   </div>
 </div>
-
+          </main>
        
 <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
 

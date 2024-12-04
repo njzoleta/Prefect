@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
 
     if ($action == 'create' || $action == 'update') {
-        $majorId = $_POST['majorId'];
+        $majorId = $_POST['major'];
         $major = $_POST['major'];
 
         if ($action == 'create') {
@@ -62,12 +62,14 @@ $result = mysqli_query($connect, $query);
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Rules & Violations</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/offense.css" rel="stylesheet">
+
 
 </head>
 <body>
@@ -81,12 +83,12 @@ $result = mysqli_query($connect, $query);
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Major Offence</h1>
+      <h1>Major Offense</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Offence</li>
-          <li class="breadcrumb-item actxive">Major Offence</li>
+          <li class="breadcrumb-item active">Rules & Violations</li>
+          <li class="breadcrumb-item actxive">Major Offense</li>
         </ol>
       </nav>
     </div>
@@ -103,7 +105,7 @@ $result = mysqli_query($connect, $query);
                 <table class="table table-bordered ">
                     <thead class="thead-dark">
                     <tr>
-                        <th>OFFENSE CODE</th>
+                        <th>OFFENSE</th>
                         <th>Action</th>
                       
                     </tr>
@@ -118,14 +120,14 @@ if (mysqli_num_rows($result) > 0) {
         echo "<tr>
         <td>{$row['major']}</td>
         <td>
-            <button class='btn btn-warning btn-sm editBtn' 
-                data-major='{$row['major']}'>
+            <button id='offenseedit' class='btn btn-warning btn-sm editBtn' 
+                data-major='{$row['major']}' >
                 Edit
             </button>
             <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure you want to delete this?\");'>
-                <input type='hidden' name='majorId' value='{$row['majorId']}'>
+                <input type='hidden' name='majorId'  value='{$row['majorId']}'>
                 <input type='hidden' name='action' value='delete'>
-                <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+                <button type='submit' class='btn btn-danger btn-sm' id='offensedelete'>Delete</button>
             </form>
         </td>
       </tr>";
@@ -137,29 +139,37 @@ if (mysqli_num_rows($result) > 0) {
 ?>
 </tbody>
 </table>
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">Add Rule</button>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal" id="addrule">Add Major Rule </button>
 
-<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Add Account</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title" id="addModalLabel">Add Major Rule</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
+                    <span aria-hidden="true">&times;</span>
+
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="action" value="create">
                     <div class="form-group">
-                        <label>Rules Id</label>
-                        <input type="text" name="minor" class="form-control" required>
+                        <label id="label">Rule Code</label>
+                        <input type="text" name="minor" class="form-control" id="input" required>
                         <span class="text-danger"><?php echo $majorId; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label id="label">New Major Rule</label>
+                        <input type="text" name="minor" class="form-control" id="input" required>
+                        <span class="text-danger"><?php echo $major; ?></span>
                     </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Add major Rules</button>
+                    <button type="submit" class="btn btn-primary" >Add major Rule</button>
+                    
+                    
                 </div>
             </form>
         </div>
@@ -171,22 +181,23 @@ if (mysqli_num_rows($result) > 0) {
         <div class="modal-content">
             <form method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Account</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title" id="ModalLabel">Edit Account</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
+                    <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="action" value="update">
                     <div class="form-group">
-                        <label>Offence</label>
-                        <input type="text" name="major" id="editmajor" class="form-control" required>
+                        <label id="label">Offense</label>
+                        <input type="text" name="major" id="editmajor" id="input" class="form-control" required>
                     </div>
                     </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Update Account</button>
+                    <button type="submit" class="btn btn-primary" id="update">Update Account</button>
+                    
                 </div>
             </form>
 </main>

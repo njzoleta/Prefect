@@ -52,7 +52,6 @@
                   <th>Section</th>
                   <th>Offence</th>
                   <th>Incident Date</th>
-                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,17 +73,6 @@
                       <td><?php echo $row->sectionid; ?></td>
                       <td><?php echo $row->offencesid; ?></td>
                       <td><?php echo $row->dateofincident; ?></td>
-                      <td>
-                        <?php
-                        if ($row->Status == "Incident Ongoind") {
-                          echo '<span class="badge badge-warning">' . $row->Status . '</span>';
-                        } else {
-                          echo '<span class="badge badge-success">' . $row->Status . '</span>';
-                        }{
-                          echo '<span class="badge badge-success">' . $row->Status . '</span>';
-                        }
-                        ?>
-                      </td>
                   </tr>
                 <?php } ?>
               </tbody>

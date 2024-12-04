@@ -3,22 +3,18 @@
   include('connect.php');
   include('checklog.php');
   check_login();
-  if(isset($_POST['Add User']))
+  if(isset($_POST['Add admin']))
     {
             $AccountId=$_POST['AccountId'];
             $name=$_POST['name'];
-            $year = $_POST['year'];
-            $course=$_POST['course'];
-            $section=$_POST['section'];
-            $password=$_POST['password'];
-            $query="INSERT INTO `bcp_sms_user`(`AccountId`, `name`, `year`, `course`, `section`, `password`,) VALUES 
-            ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]'";
+            $query="INSERT INTO `bcp_sms_admin`(`AccountId`, `name`,) VALUES 
+            ('[value-1]','[value-2]'";
             $stmt = $mysqli->prepare($query);
-            $rc=$stmt->bind_param('ssssssssss', $AccountId, $name, $year, $couseid , $section, $password ,);
+            $rc=$stmt->bind_param('ss', $AccountId, $name,);
             $stmt->execute();
                 if($stmt)
                 {
-                    $succ = "User Added";
+                    $succ = "Admin Added";
                 }
                 else 
                 {
@@ -32,7 +28,7 @@
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>User Log</title>
+    <title>AdminLog</title>
   
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -55,19 +51,21 @@
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1 class="dashboard">Userlog</h1>
+      <h1 class="dashboard">Admin Log</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Userlog</li>
+          <li class="breadcrumb-item active">Admin Log</li>
           <li class="breadcrumb-item active">Add</li>
+
+
         </ol>
       </nav>
     </div>    
 
-  <div class="card-body" id="form">
+  <div class="card-body">
     <!-- Add User Form -->
-    <form method="POST"> 
+    <form method="POST" id="form"> 
       <div class="form-group">
           <label for="AccountId">Student Number</label>
           <input type="text" required class="form-control" id="AccountId" name="AccountId">
@@ -77,23 +75,11 @@
           <input type="text" class="form-control" id="name" name="name">
       </div>
       <div class="form-group">
-          <label for="year">Year</label>
-          <input type="text" class="form-control" id="year" name="year">
-      </div>
-      <div class="form-group">
-          <label for="course">Course</label>
-          <input type="text" class="form-control" id="course" name="course">
-      </div>
-      <div class="form-group">
-          <label for="section">Section</label>
-          <input type="text" class="form-control" id="section" name="section">
-      </div>
-      <div class="form-group">
           <label for="password">Password</label>
           <input type="Password" class="form-control" id="password" name="password">
       </div>
 
-      <button type="submit" name="add_user" class="btn btn-success">Add User</button>
+      <button type="submit" name="add_user" class="btn btn-success">Add admin</button>
     </form>
     <!-- End Form -->
   </div>

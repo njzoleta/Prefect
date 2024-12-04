@@ -12,22 +12,22 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-journal-text"></i><span>Offences</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-journal-text"></i><span>Rules & Violations</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
         <a href="user_minor.php">
-          <i class="bi bi-circle"></i><span>MINOR OFFENCES</span>
+          <i class="bi bi-circle"></i><span>MINOR OFFENSE</span>
         </a>
       </li>
       <li>
         <a href="user_major.php">
-          <i class="bi bi-circle"></i><span>MAJOR OFFENCES</span>
+          <i class="bi bi-circle"></i><span>MAJOR OFFENSE</span>
         </a>
       </li>
       <li>
         <a href="user_grave.php">
-          <i class="bi bi-circle"></i><span>GRAVE OFFENCES</span>
+          <i class="bi bi-circle"></i><span>GRAVE OFFENSE</span>
         </a>
       </li>
     </ul>
@@ -71,9 +71,9 @@
 
 
   <li class="nav-item">
-    <a class="nav-link " id="logout" href="/logout.php">
+    <a class="nav-link " id="logout" href="logout.php">
       <i class="bi bi-grid"></i>
-      <span>SIGN OUT</span>
+      <span>LOG OUT</span>
     </a>
   </li>
 </aside>

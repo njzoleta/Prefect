@@ -11,13 +11,13 @@ session_start();
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Incident Log </title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="assets\css\llog.css">
 </head>
 <body>
 
@@ -31,12 +31,12 @@ session_start();
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1 class="dashboard">Dashboard</h1>
+      <h1 class="dashboard">Incident Log</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="user.php">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active">Incident Log</li>
+          <li class="breadcrumb-item active">Manage</li>
 
         </ol>
       </nav>
@@ -100,8 +100,8 @@ session_start();
                         ?>
                       </td>
                     <td>
-                        <a href="#?Studentnumber=<?php echo $row->Studentnumber;?>" class="badge badge-success"><i class = "fa fa-check"></i> Approve</a>
-                        <a href="#?Studentnumber=<?php echo $row->Studentnumber;?>" class="badge badge-danger"><i class ="fa fa-trash"></i> Delete</a>
+                        <a id="approve" href="#?Studentnumber=<?php echo $row->Studentnumber;?>" class="badge badge-success"><i class = "fa fa-check"></i> Approve</a>
+                        <a id="delete" href="#?Studentnumber=<?php echo $row->Studentnumber;?>" class="badge badge-danger"><i class ="fa fa-trash"></i> Delete</a>
                         </i>                  
                     </td>
                   </tr>

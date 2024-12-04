@@ -5,7 +5,7 @@ session_start();
   check_login();
   $AccountId=$_SESSION['AccountId'];
 
-  if(isset($_POST['delete_user']))
+  if(isset($_POST['update_user']))
     {
             $AccountId = $_GET['AccountId'];
             $AccountId = $_POST['AccountId'];
@@ -19,7 +19,7 @@ session_start();
             $stmt->execute();
                 if($stmt)
                 {
-                    $succ = "User Deleted";
+                    $succ = "User updated";
                 }
                 else 
                 {
@@ -78,7 +78,7 @@ session_start();
 
         <?php } ?>
 
-        <h1 class="dashboard">Delete</h1>
+        <h1 class="dashboard">update</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
@@ -129,7 +129,7 @@ session_start();
                 <input type="text" readonly class="form-control" value="<?php echo $row->course;?>" id="exampleInputEmail1" name="Course">
             </div>
 
-            <button type="submit" name="delete_booking" class="btn btn-danger">Delete Booking</button>
+            <button type="submit" name="update_booking" class="btn btn-danger">update Booking</button>
           </form>
           <!-- End Form-->
         <?php }?>

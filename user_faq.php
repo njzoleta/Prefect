@@ -11,12 +11,13 @@ session_start();
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>FAQ</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets\css\prefectinfo.css">
 
 </head>
 <body>
@@ -34,7 +35,7 @@ session_start();
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>FAG</h1>
+      <h1>FAQ</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -50,29 +51,29 @@ session_start();
 
         <div class="col-xl-6">
 
-          <div class="row">
-            <div class="col-lg-6">
+          <div class="row" id="row">
+            <div class="col-lg-6" id="located">
               <div class="info-box card">
                 <i class="bi bi-geo-alt"></i>
                 <h3>Located@</h3>
                 <p>Phs3 Ground Floor Lobby Area In between Office of the Safety and Security and Office of the Ascendens Asia</p>
               </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="contact">
               <div class="info-box card">
                 <i class="bi bi-telephone"></i>
                 <h3>Call Us</h3>
                 <p>+1 5589 55488 55<br>+1 6678 254445 41</p>
               </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="email">
               <div class="info-box card">
                 <i class="bi bi-envelope"></i>
                 <h3>Email Us</h3>
                 <p>info@example.com<br>contact@example.com</p>
               </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" id="open">
               <div class="info-box card">
                 <i class="bi bi-clock"></i>
                 <h3>Open Hours</h3>

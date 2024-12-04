@@ -17,7 +17,7 @@ if (!$result) {
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Rules & Violations</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -40,17 +40,17 @@ if (!$result) {
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>MINOR OFFENCES</h1>
+      <h1>MINOR OFFENSE</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Offences</li>
-          <li class="breadcrumb-item active">Minor Offences</li>
+          <li class="breadcrumb-item active">Rules & Violations</li>
+          <li class="breadcrumb-item active">Minor Offense</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
     <div class="container">
-        <h1 class="mt-4">4.1 MINOR OFFENSES</h1>
+        <h1 class="mt-4">4.1 MINOR OFFENSE</h1>
         <p>Those offenses not included in the foregoing violations shall be considered minor ones which merit suspension, warning, reprimand, or a disciplinary penalty fixed by the school. However, violation of any of the minor offenses enumerated below for two (2) consecutive times shall be penalized with sanctions as provided under the major offenses.</p>
         <div class="card-body">
      

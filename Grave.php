@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
 
     if ($action == 'create' || $action == 'update') {
-        $graveId = $_POST['graveId'];
+        $graveId = $_POST['grave'];
         $grave = $_POST['grave'];
 
         if ($action == 'create') {
@@ -62,12 +62,13 @@ $result = mysqli_query($connect, $query);
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Rules & Violations</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/offense.css" rel="stylesheet">
 
 </head>
 <body>
@@ -81,17 +82,17 @@ $result = mysqli_query($connect, $query);
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Grave Offence</h1>
+      <h1>Grave Offense</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Offences</li>
-          <li class="breadcrumb-item actxive">Grave Offence</li>
+          <li class="breadcrumb-item active">Rules & Violations</li>
+          <li class="breadcrumb-item actxive">Grave Offense</li>
         </ol>
       </nav>
     </div>
   
-    <p>4.1.3 Grave Offence</p>
+    <p>4.1.3 Grave Offense</p>
     <p>These are offenses which are so severe. The proper penalty for which is exclusion or expulsion.</p>
 
     <div class="container mt-5">
@@ -102,7 +103,7 @@ $result = mysqli_query($connect, $query);
                 <table class="table table-bordered ">
                     <thead class="thead-dark">
                     <tr>
-                        <th>OFFENSE CODE</th>
+                        <th>OFFENSE</th>
                         <th>Action</th>
                       
                     </tr>
@@ -117,14 +118,14 @@ if (mysqli_num_rows($result) > 0) {
         echo "<tr>
         <td>{$row['grave']}</td>
         <td>
-            <button class='btn btn-warning btn-sm editBtn' 
+            <button id='offenseedit' class='btn btn-warning btn-sm editBtn' 
                 data-grave='{$row['grave']}'>
                 Edit
             </button>
             <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure you want to delete this?\");'>
                 <input type='hidden' name='graveId' value='{$row['graveId']}'>
                 <input type='hidden' name='action' value='delete'>
-                <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+                <button type='submit' class='btn btn-danger btn-sm' id='offensedelete'>Delete</button>
             </form>
         </td>
       </tr>";
@@ -135,24 +136,29 @@ if (mysqli_num_rows($result) > 0) {
 ?>
 </tbody>
 </table>
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">Add Grave Rules</button>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal" id="addrule">Add Grave Rule</button>
 
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Add Rules</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="addModalLabel">Add Grave Rule</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="action" value="create">
                     <div class="form-group">
-                        <label>Rules ID</label>
-                        <input type="text" name="grave" class="form-control" required>
-                        <span class="text-danger"><?php echo $graveIderr; ?></span>
+                        <label id="label">Rule Code</label>
+                        <input type="text" name="grave" id="input" class="form-control" required>
+                        <span class="text-danger"><?php echo $graveId; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label id="label">New Rule Grave</label>
+                        <input type="text" name="grave" id="input" class="form-control" required>
+                        <span class="text-danger"><?php echo $grave; ?></span>
                     </div>
                     </div>
                 </div>
@@ -169,22 +175,22 @@ if (mysqli_num_rows($result) > 0) {
         <div class="modal-content">
             <form method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Rules</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="ModalLabel">Edit Rules</h5>
+                    <button type="button" id="close" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="action" value="update">
                     <div class="form-group">
-                        <label>Offence</label>
-                        <input type="text" name="grave" id="editminor" class="form-control" required>
+                        <label>Offense</label>
+                        <input type="text" name="grave" id="editgrave" class="form-control" required>
                     </div>
                     </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Update Account</button>
+                    <button type="submit" class="btn btn-primary" id="update">Update Account</button>
                 </div>
             </form>
 </main>

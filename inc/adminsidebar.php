@@ -30,22 +30,22 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-journal-text"></i><span>Offences</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-journal-text"></i><span>Rules & Violations</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
         <a href="Minor.php">
-          <i class="bi bi-circle"></i><span>MINOR OFFENCES</span>
+          <i class="bi bi-circle"></i><span>MINOR OFFENSE</span>
         </a>
       </li>
       <li>
         <a href="Major.php">
-          <i class="bi bi-circle"></i><span>MAJOR OFFENCES</span>
+          <i class="bi bi-circle"></i><span>MAJOR OFFENSE</span>
         </a>
       </li>
       <li>
         <a href="Grave.php">
-          <i class="bi bi-circle"></i><span>GRAVE OFFENCES</span>
+          <i class="bi bi-circle"></i><span>GRAVE OFFENSE</span>
         </a>
       </li>
     </ul>
@@ -119,12 +119,38 @@
   </ul>    
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#adminlog-nav" data-bs-toggle="collapse" href="#">
+      <i class="bi bi-people"></i><span>Admin Log</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+    <ul id="adminlog-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+      <li>
+        <a href="adminlog_add.PHP">
+          <i class="bi bi-circle"></i><span>Add</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="adminlog_view.php">
+          <i class="bi bi-circle"></i><span>View</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="adminlog_manage.php">
+          <i class="bi bi-circle"></i><span>Manage</span>
+        </a>
+      </li>
+  </ul>    
+  </li>
+
+
 
 
   <li class="nav-item">
-    <a class="nav-link " id="logout" href="/logout.php">
+    <a class="nav-link " id="logout" href="logout.php">
       <i class="bi bi-grid"></i>
-      <span>SIGN OUT</span>
+      <span>LOG OUT</span>
     </a>
   </li>
 </aside>

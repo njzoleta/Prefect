@@ -16,7 +16,7 @@ session_start();
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Rules & Violations</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -39,17 +39,17 @@ session_start();
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Grave Offences</h1>
+      <h1>Grave Offense</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Offences</li>
-          <li class="breadcrumb-item active">Grave Offences</li>
+          <li class="breadcrumb-item active">Rules & Violations</li>
+          <li class="breadcrumb-item active">Grave Offense</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
     <div class="container">
-        <h1 class="mt-4">4.1.3 GRAVE OFFENSES</h1>
+        <h1 class="mt-4">4.1.3 GRAVE OFFENSE</h1>
         <p>These are offenses which are so severe. The proper penalty for which is exclusion or expulsion.</p>
         
         <div class="table-responsive">

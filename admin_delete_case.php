@@ -8,10 +8,6 @@
   if(isset($_POST['delete_booking']))
     {
             $u_id = $_GET['u_id'];
-            //$u_fname=$_POST['u_fname'];
-            //$u_lname = $_POST['u_lname'];
-            //$u_phone=$_POST['u_phone'];
-            //$u_addr=$_POST['u_addr'];
             $u_car_type = $_POST['u_car_type'];
             $u_car_regno  = $_POST['u_car_regno'];
             $u_car_bookdate = $_POST['u_car_bookdate'];

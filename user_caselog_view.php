@@ -14,7 +14,7 @@ $result = mysqli_query($connect, $query);
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Incident Log</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -33,7 +33,7 @@ $result = mysqli_query($connect, $query);
 
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1 class="dashboard">Dashboard</h1>
+    <h1 class="dashboard">Incident Log</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="user.php">Home</a></li>

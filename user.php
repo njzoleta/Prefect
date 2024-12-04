@@ -44,78 +44,47 @@ session_start();
 <!-- End Page Title -->
        
 <!-- Recent case -->
- <div class="col-12">
+<div class="col-12">
               <div class="card recent-sales overflow-auto">
                 <div class="card-body">
-                  <h5 class="card-title">Incident <span>| Today</span></h5>
-                    <table class="table table-borderless datatable">
-                    <thead>
-                      <tr>
-                        <th scope="col">Student #</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Grade/Year</th>
-                        <th scope="col">Course</th>
-                        <th scope="col">Section</th>
-                        <th scope="col">Offences</th>
-                        <th scope="col">Status</th>
-          </tr>
-          </thead>
+            <table class="table table-borderless datatable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Student number</th>
+                  <th>Name</th>
+                  <th>Year</th>
+                  <th>Course</th>
+                  <th>Section</th>
+                  <th>Offence</th>
+                  <th>Incident Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <?php
+                    $ret = "SELECT * FROM bcp_sms_log WHERE Status IN ('Incident Approved', 'Incident Pending', 'Incident Ongoing')";
+                    $stmt = $connect->prepare($ret);
+                    $stmt->execute();
+                    $res = $stmt->get_result();
+                    $cnt = 1;
 
-          <tbody>
-          <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Kyla B. Ta-ay</td>
-                        <td><a href="#" class="text-primary">3rd year</a></td>
-                        <td>BSEDUC</td>
-                        <td>310</td>
-                        <td>Vandalism</td>
-                        <td><span class="badge bg-danger">Rejected</span></td>
-          </tr>
-
-          <tr>
-                        <th scope="row"><a href="#">24211</a></th>
-                        <td>Janine Besmonte</td>
-                        <td><a href="#" class="text-primary">3rd Year</a></td>
-                        <td>BSEDUC</td>
-                        <td>3104</td>
-                        <td>Public Display of Affection</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-          </tr>
-
-          <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Vejay Cayanan</td>
-                        <td><a href="#" class="text-primary">2rt year</a></td>
-                        <td>BSIT</td>
-                        <td>2101</td>
-                        <td>Recruitment to fraternities</td>
-                        <td><span class="badge bg-danger">Rejected</span></td>
-          </tr>
-
-          <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Kenneth Perdigon</td>
-                        <td><a href="#" class="text-primary">2nd year</a></td>
-                        <td>BSIT</td>
-                        <td>4101</td>
-                        <td>Pornographic</td>
-                        <td><span class="badge bg-danger">Rejected</span></td>
-          </tr>
-
-          <tr>
-                  <th scope="row"><a href="#">#2555</a></th>
-                  <td>Jaybie Sosmena</td>
-                  <td><a href="#" class="text-primary">Grade 11</a></td>
-                        <td>ICT</td>
-                        <td>1102</td>
-                        <td>Bully</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-          </tr>
-          </tbody>
-          </table>
+                    while($row = $res->fetch_object()) {
+                  ?>
+                    <tr>
+                      <td><?php echo $cnt++; ?></td>
+                      <td><?php echo $row->Studentnumber; ?></td>
+                      <td><?php echo $row->nameid; ?></td>
+                      <td><?php echo $row->yearid; ?></td>
+                      <td><?php echo $row->courseid; ?></td>
+                      <td><?php echo $row->sectionid; ?></td>
+                      <td><?php echo $row->offencesid; ?></td>
+                      <td><?php echo $row->dateofincident; ?></td>
+                  </tr>
+                <?php } ?>
+              </tbody>
+            </table>
           </div>
-          </div>
-          </div>
+        </div>
 
           <section class="section dashboard">
 

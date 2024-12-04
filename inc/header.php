@@ -2,7 +2,7 @@
   <div class="d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center">
-        <img src="/logo.png" alt="">
+        <img src="logo.png" alt="">
           <span class="d-none d-lg-block">Prefect Department</span>
       </a>
 

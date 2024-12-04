@@ -11,7 +11,7 @@ check_login();
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>User Manage</title>
+  <title>Admin Log</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -32,11 +32,11 @@ check_login();
 
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1 class="dashboard">User Manage</h1>
+    <h1 class="dashboard">AdminLog</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-        <li class="breadcrumb-item active">User Log</li>
+        <li class="breadcrumb-item active">AdminLog</li>
         <li class="breadcrumb-item active">Manage</li>
       </ol>
     </nav>
@@ -46,7 +46,7 @@ check_login();
     <div class="container-fluid">
       <div class="card mb-3">
         <div class="card-header">
-          <i class="fas fa-table"></i> User Log
+          <i class="fas fa-table"></i>Admin Log
         </div>
         <div class="col-12">
           <div class="card recent-sales overflow-auto">
@@ -55,17 +55,16 @@ check_login();
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Student number</th>
+                    <th>Id Number</th>
                     <th>Name</th>
-                    <th>Year</th>
-                    <th>Course</th>
-                    <th>Section</th>
+
+
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
-                    $ret = "SELECT * FROM bcp_sms3_user WHERE  AccountId ORDER BY RAND() LIMIT 100";
+                    $ret = "SELECT * FROM bcp_sms3_admin WHERE AccountId ORDER BY RAND() LIMIT 100";
                     $stmt = $mysqli->prepare($ret);
                     $stmt->execute();
                     $res = $stmt->get_result();
@@ -76,13 +75,10 @@ check_login();
                       <td><?php echo $cnt++; ?></td>
                       <td><?php echo htmlspecialchars($row->AccountId); ?></td>
                       <td><?php echo htmlspecialchars($row->name); ?></td>
-                      <td><?php echo htmlspecialchars($row->year); ?></td>
-                      <td><?php echo htmlspecialchars($row->course); ?></td>
-                      <td><?php echo htmlspecialchars($row->section); ?></td>
 
-                      <td >
-                        <a id="update" href="admin_update_user.php?AccoundId=<?php echo $row->AccountId; ?>" class="badge badge-danger" ><i class="fa fa-trash"></i> Update</a>
-                        <a id="delete" href="admin_delete_user.php?AccoundId=<?php echo $row->AccountId; ?>" class="badge badge-danger" ><i class="fa fa-trash"></i> Delete</a>
+                      <td>
+                      <a id="approve" href="admin_delete_user.php?AccoundId=<?php echo $row->AccountId; ?>" class="badge badge-danger"><i class="fa fa-trash"></i>Update </a>
+                        <a id="delete" href="admin_delete_user.php?AccoundId=<?php echo $row->AccountId; ?>" class="badge badge-danger"><i class="fa fa-trash"></i> Delete</a>
                       </td>
                     </tr>
                     <?php $cnt = $cnt+1; }?>

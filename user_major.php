@@ -16,7 +16,7 @@ session_start();
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Rules & Violations</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -38,17 +38,17 @@ session_start();
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>MAJOR OFFENCES</h1>
+      <h1>MAJOR OFFENSE</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Offences</li>
-          <li class="breadcrumb-item active">Major Offences</li>
+          <li class="breadcrumb-item active">Rules & Violations</li>
+          <li class="breadcrumb-item active">Major Offense</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
     <div class="container">
-      <h1 class="mt-4">4.1.2 MAJOR OFFENSES</h1>
+      <h1 class="mt-4">4.1.2 MAJOR OFFENSE</h1>
       <p contenteditable="true" id="intro-text">Those that immediately call for a meeting with the parents. Temporary holding of a student while awaiting for 
           the arrival of his parent or guardian may be imposed without any prior warning.</p>
       

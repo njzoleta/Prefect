@@ -62,12 +62,13 @@ $result = mysqli_query($connect, $query);
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard</title>
+  <title>Rules & Violations</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/offense.css" rel="stylesheet">
 
 </head>
 <body>
@@ -81,12 +82,12 @@ $result = mysqli_query($connect, $query);
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Minor Offence</h1>
+      <h1>Minor Offense</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Offences</li>
-          <li class="breadcrumb-item actxive">Minor Offence</li>
+          <li class="breadcrumb-item">Rules & Violations</li>
+          <li class="breadcrumb-item active">Minor Offense</li>
         </ol>
       </nav>
     </div>
@@ -103,7 +104,7 @@ $result = mysqli_query($connect, $query);
                 <table class="table table-bordered ">
                     <thead class="thead-dark">
                     <tr>
-                        <th>OFFENSE CODE</th>
+                        <th>OFFENSE</th>
                         <th>Action</th>
                       
                     </tr>
@@ -118,14 +119,14 @@ if (mysqli_num_rows($result) > 0) {
         echo "<tr>
         <td>{$row['minor']}</td>
         <td>
-            <button class='btn btn-warning btn-sm editBtn' 
+            <button id='offenseminoredit' class='btn btn-warning btn-sm editBtn' 
                 data-minor='{$row['minor']}'>
                 Edit
             </button>
             <form method='POST' style='display:inline-block;' onsubmit='return confirm(\"Are you sure you want to delete this?\");'>
                 <input type='hidden' name='minorId' value='{$row['minorId']}'>
                 <input type='hidden' name='action' value='delete'>
-                <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+                <button id='offenseminordelete' type='submit' class='btn btn-danger btn-sm'>Delete</button>
             </form>
         </td>
       </tr>";
@@ -136,24 +137,29 @@ if (mysqli_num_rows($result) > 0) {
 ?>
 </tbody>
 </table>
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">Add Minor Rules</button>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal" id="addrule">Add Minor Rule</button>
 
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Add Account</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="addModalLabel">Add Minor Rule</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="action" value="create">
                     <div class="form-group">
-                        <label>Account ID</label>
-                        <input type="text" name="minor" class="form-control" required>
-                        <span class="text-danger"><?php echo $minorIderr; ?></span>
+                        <label  id="label">Rule Code</label>
+                        <input  id="input" type="text" name="minor" class="form-control" required>
+                        <span class="text-danger"><?php echo $minorId; ?></span>
+                        <div class="form-group">
+                        <label  id="label">New Minor Rule</label>
+                        <input  id="input" type="text" name="minor" class="form-control" required>
+                        <span class="text-danger"><?php echo $minor; ?></span>
+                    </div>
                     </div>
                     </div>
                 </div>
@@ -171,21 +177,21 @@ if (mysqli_num_rows($result) > 0) {
             <form method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalLabel">Edit Account</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="action" value="update">
                     <div class="form-group">
-                        <label>Offence</label>
+                        <label>Offense</label>
                         <input type="text" name="minor" id="editminor" class="form-control" required>
                     </div>
                     </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Update Account</button>
+                    <button type="submit" class="btn btn-primary" id="update">Update Account</button>
                 </div>
             </form>
 </main>

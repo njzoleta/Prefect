@@ -34,13 +34,13 @@
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Dashboard</title>
+    <title>Incident Log</title>
   
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
-  
+    <link rel="stylesheet" href="assets\css\llog.css">
   </head>
   <body>
   
@@ -56,11 +56,12 @@
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1 class="dashboard">Dashboard</h1>
+      <h1 class="dashboard">Incident Log</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active">Incident Log</li>
+          <li class="breadcrumb-item active">Add</li>
         </ol>
       </nav>
     </div>    
@@ -69,7 +70,7 @@
   </div>
   <div class="card-body">
     <!-- Add User Form -->
-    <form method="POST"> 
+    <form method="POST" id="form"> 
       <div class="form-group">
           <label for="StudentNumber">Student Number</label>
           <input type="text" required class="form-control" id="StudentNumber" name="StudentNumber">
@@ -107,7 +108,7 @@
           <input type="text" class="form-control" id="involve" name="involve">
       </div>
 
-      <button type="submit" name="add_user" class="btn btn-success">Add User</button>
+      <button type="submit" name="add_user" class="btn btn-success">Add Violation</button>
     </form>
     <!-- End Form -->
   </div>
