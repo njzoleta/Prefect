@@ -101,12 +101,19 @@
       </div>
       <div class="form-group">
           <label for="evidence">Evidence</label>
-          <input type="text" class="form-control" id="evidence" name="Evidence">
-      </div>
+          <input type="file" name="fileToUpload" id="fileToUpload">
+          <input type="submit" value="Upload Image" name="submit">
+      </div><br>
       <div class="form-group">
           <label for="involve">Involve</label>
           <input type="text" class="form-control" id="involve" name="involve">
       </div>
+
+      <div class="form-group">
+          <label for="Penalties">Penalties</label>
+          <input type="text" class="form-control" id="involve" name="Penalties">
+      </div>
+
 
       <button type="submit" name="add_user" class="btn btn-success">Add Violation</button>
     </form>

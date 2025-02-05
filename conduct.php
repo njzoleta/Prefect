@@ -58,6 +58,7 @@
         </ul>
 
         <p>Always remember, a person who places A PHOTO, VIDEO MESSAGE on the INTERNET is deemed to have intended to forsake and renounce all privacy rights to such imagery or text.</p>
+        <p><b> Republic Act No. 10173</b>, also known as the <b>“Data Privacy Act of 2012,”</b> is a law in the Philippines that aims to protect individuals’ personal information. It sets guidelines for how organizations handle, process, and secure personal data to ensure the respect of people’s privacy.</p>
         <p>Any violation of the agreement above will be subjected to appropriate disciplinary action as stipulated in the STUDENT HANDBOOK.</p>
         <p>If found guilty, the scholarship will be deemed null and void and shall be forced to pay the school's required TUITION FEE</p>
     </div>

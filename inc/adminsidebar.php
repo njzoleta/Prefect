@@ -11,17 +11,39 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-menu-button-wide"></i><span>Student Information</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-menu-button-wide"></i><span>Information</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
         <a href="Seniorhigh.php">
-          <i class="bi bi-circle"></i><span>SENIOR HIGHSCHOOL</span>
+          <i class="bi bi-circle"></i><span>SENIOR HIGHSCHOOL STUDENTS</span>
         </a>
       </li>
       <li>
         <a href="College.php">
-          <i class="bi bi-circle"></i><span>COLLEGE</span>
+          <i class="bi bi-circle"></i><span>COLLEGE STUDENTS</span>
+        </a>
+      </li>
+      <li>
+        <a href="seniorhighteach.php">
+          <i class="bi bi-circle"></i><span>SENIOR HIGH TEACHERS</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="collegeteach.php">
+          <i class="bi bi-circle"></i><span>COLLEGE TEACHERS</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="heads.php">
+          <i class="bi bi-circle"></i><span>HEADS</span>
+        </a>
+      </li>
+      <li>
+        <a href="staff.php">
+          <i class="bi bi-circle"></i><span>STAFFS</span>
         </a>
       </li>
 
@@ -30,7 +52,7 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-journal-text"></i><span>Rules & Violations</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-journal-text"></i><span>Rules Violations</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
@@ -64,6 +86,11 @@
       <li>
         <a href="faq.php">
           <i class="bi bi-circle"></i><span>FAQ</span>
+        </a>
+      </li>
+      <li>
+        <a href="emergency.php">
+          <i class="bi bi-circle"></i><span>Emergency Hotlines</span>
         </a>
       </li>
     </ul>

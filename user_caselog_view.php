@@ -60,6 +60,7 @@ $result = mysqli_query($connect, $query);
                   <th>Course</th>
                   <th>Section</th>
                   <th>Offence</th>
+                  <th>Penalties</th>
                   <th>Incident Date</th>
                   <th>Status</th>
                 </tr>

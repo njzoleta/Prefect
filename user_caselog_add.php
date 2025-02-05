@@ -110,6 +110,11 @@
           <label for="involve">Involve</label>
           <input type="text" class="form-control" id="involve" name="involve">
       </div>
+      
+      <div class="form-group">
+          <label for="involve">Penalties</label>
+          <input type="text" class="form-control" id="involve" name="Penalties">
+      </div>
 
       <button type="submit" name="add_user" class="btn btn-success">Add Violation</button>
     </form>

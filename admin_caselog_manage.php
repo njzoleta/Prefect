@@ -62,6 +62,7 @@ session_start();
                   <th>Course</th>
                   <th>Section</th>
                   <th>Offence</th>
+                  <th>Penalties</th>                  
                   <th>Incident Date</th>
                   <th>Status</th>
                   <th>Action</th> 

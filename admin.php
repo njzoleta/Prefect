@@ -38,47 +38,7 @@
       </nav>
     </div>    
 
-<div class="col-12">
-              <div class="card recent-sales overflow-auto">
-                <div class="card-body">
-            <table class="table table-borderless datatable">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Student number</th>
-                  <th>Name</th>
-                  <th>Year</th>
-                  <th>Course</th>
-                  <th>Section</th>
-                  <th>Offence</th>
-                  <th>Incident Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                  <?php
-                    $ret = "SELECT * FROM bcp_sms_log WHERE Status IN ('Incident Approved', 'Incident Pending', 'Incident Ongoing')";
-                    $stmt = $connect->prepare($ret);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
-                    $cnt = 1;
 
-                    while($row = $res->fetch_object()) {
-                  ?>
-                    <tr>
-                      <td><?php echo $cnt++; ?></td>
-                      <td><?php echo $row->Studentnumber; ?></td>
-                      <td><?php echo $row->nameid; ?></td>
-                      <td><?php echo $row->yearid; ?></td>
-                      <td><?php echo $row->courseid; ?></td>
-                      <td><?php echo $row->sectionid; ?></td>
-                      <td><?php echo $row->offencesid; ?></td>
-                      <td><?php echo $row->dateofincident; ?></td>
-                  </tr>
-                <?php } ?>
-              </tbody>
-            </table>
-          </div>
-        </div>
 
           <section class="section dashboard">
 
@@ -180,7 +140,7 @@
                                 markers: {
                                   size: 2
                                 },
-                                colors: [ '#2eca6a','#ff060','#ffa406','#20ff06','#06fff4','#ff06ed'],
+                                colors: [ 'blue','black',],
                                 fill: {
                                   type: "gradient",
                                   gradient: {
