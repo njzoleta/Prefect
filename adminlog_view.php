@@ -4,13 +4,26 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-// Corrected SQL query
-$query = "SELECT AccountId, name FROM bcp_sms3_admin"; // Removed the extra comma and WHERE clause
-$result = $mysqli->query($query);
+// Use the correct variable name for the database connection
+$query = "SELECT AccountId, name FROM bcp_sms3_admin"; 
+$result = $connect->query($query); // Change $mysqli to $connect
 
+// Check if the query was successful
 if (!$result) {
-    die("Query failed: " . $mysqli->error);
+    die("Query failed: " . $connect->error); // Change $mysqli to $connect
 }
+
+// Fetch results and handle them
+$accounts = [];
+while ($row = $result->fetch_assoc()) {
+    $accounts[] = $row; 
+}
+
+// Optionally, you can free the result set
+$result->free();
+
+// Close the database connection if it's not needed anymore
+$connect->close(); // Change $mysqli to $connect
 ?>
 
 <!DOCTYPE html>
@@ -65,12 +78,12 @@ if (!$result) {
           <tbody>
           <?php
           $cnt = 1; // Initialize counter
-          while ($row = $result->fetch_object()) { // Fetching the user data
+          foreach ($accounts as $account) { // Use the $accounts array
           ?>
             <tr>
               <td><?php echo $cnt++; ?></td>
-              <td><?php echo $row->AccountId; ?></td>
-              <td><?php echo $row->name; ?></td>
+              <td><?php echo htmlspecialchars($account['AccountId']); ?></td>
+              <td><?php echo htmlspecialchars($account['name']); ?></td>
             </tr>
           <?php } ?>
           </tbody>

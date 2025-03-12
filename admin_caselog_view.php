@@ -1,113 +1,118 @@
 <?php
 session_start();
-include('connect.php');
-include('checklog.php');
-check_login();
+include_once('connect.php');
+include_once('checklog.php');
+check_login(); 
 
-$query = "SELECT Studentnumber_Id, Nameid, yearid, courseid, sectionid FROM bcp_sms_log";
-$result = mysqli_query($connect, $query);
+$query = "SELECT * FROM bcp_sms_log";  // Make sure your query is properly defined
+
+$result = mysqli_query($connect, $query); // Use $connect and $query here
+
+if (!$result) {
+    die("Query failed: " . mysqli_error($connect));
+}
+
+$num_rows = mysqli_num_rows($result);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Incident Log</title>
-
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-  <link href="assets/css/style.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Incident Log</title>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 
 <!-- Header -->
-<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
+<?php include_once('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
 <!-- End Header -->
 
 <!-- Sidebar -->
-<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<?php include_once('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
 <!-- End Sidebar -->
 
 <main id="main" class="main">
-  <div class="pagetitle">
-    <h1 class="dashboard">Incident Log</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="user.php">Home</a></li>
-        <li class="breadcrumb-item active">Incident Log</li>
-        <li class="breadcrumb-item active">View</li>
-      </ol>
-    </nav>
-  </div>   
+    <div class="pagetitle">
+        <h1 class="dashboard">Incident Log</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="user.php">Home</a></li>
+                <li class="breadcrumb-item active">Incident Log</li>
+                <li class="breadcrumb-item active">View</li>
+            </ol>
+        </nav>
+    </div>
 
-      <!-- Incident Table -->
-      <div class="card mb-3">
+    <!-- Incident Table -->
+    <div class="card mb-3">
         <div class="card-header">
-          <i class="fas fa-table"></i> Incident Log View
+            <i class="fas fa-table"></i> Incident Log View
         </div>
         <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Student number</th>
-                  <th>Name</th>
-                  <th>Year</th>
-                  <th>Course</th>
-                  <th>Section</th>
-                  <th>Offence</th>
-                  <th>Penalties</th>
-                  <th>Incident Date</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                  <?php
-                    $ret = "SELECT * FROM bcp_sms_log WHERE Status IN ('Incident Approved', 'Incident Pending', 'Incident Ongoing')";
-                    $stmt = $connect->prepare($ret);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
-                    $cnt = 1;
-
-                    while($row = $res->fetch_object()) {
-                  ?>
-                    <tr>
-                      <td><?php echo $cnt++; ?></td>
-                      <td><?php echo $row->Studentnumber_Id; ?></td>
-                      <td><?php echo $row->nameid; ?></td>
-                      <td><?php echo $row->yearid; ?></td>
-                      <td><?php echo $row->courseid; ?></td>
-                      <td><?php echo $row->sectionid; ?></td>
-                      <td><?php echo $row->offencesid; ?></td>
-                      <td><?php echo $row->dateofincident; ?></td>
-                      <td>
-                        <?php
-                        if ($row->Status == "Incident Ongoind") {
-                          echo '<span class="badge badge-warning">' . $row->Status . '</span>';
-                        } else {
-                          echo '<span class="badge badge-success">' . $row->Status . '</span>';
-                        }
-                        {
-                          echo '<span class="badge badge-success">' . $row->Status . '</span>';
-                        }
-                        ?>
-                      </td>
-                  </tr>
-                <?php } ?>
-              </tbody>
-            </table>
-          </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student number</th>
+                            <th>Name</th>
+                            <th>Year</th>
+                            <th>Course</th>
+                            <th>Section</th>
+                            <th>Severity</th>
+                            <th>Penalties</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    <?php
+    if ($num_rows > 0) {
+        $cnt = 1;
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <tr>
+                <td><?php echo $cnt++; ?></td>
+                <td><?php echo htmlspecialchars($row->Studentnumber_Id); ?></td>
+                <td><?php echo htmlspecialchars($row->Nameid); ?></td>
+                <td><?php echo htmlspecialchars($row->yearid); ?></td>
+                <td><?php echo htmlspecialchars($row->courseid); ?></td>
+                <td><?php echo htmlspecialchars($row->sectionid); ?></td>
+                <td><?php echo htmlspecialchars($row->severityid); ?></td>
+                <td><?php echo htmlspecialchars($row->penalties); ?></td>
+                <td>
+                    <?php
+                    $status = htmlspecialchars($row->Status);
+                    if ($status == 'Active') {
+                        echo '<span class="badge bg-danger">' . $status . '</span>'; // Red for Active
+                    } elseif ($status == 'Resolved') {
+                        echo '<span class="badge bg-success">' . $status . '</span>'; // Green for Resolved
+                    } elseif ($status == 'Pending') {
+                        echo '<span class="badge bg-warning">' . $status . '</span>'; // Orange for Pending
+                    } else {
+                        echo '<span class="badge bg-secondary">' . $status . '</span>'; // Default for other statuses
+                    }
+                    ?>
+                </td>
+            </tr>
+            <?php
+        }
+    } else {
+        echo "<tr><td colspan='9'>No records found.</td></tr>";
+    }
+    ?>
+</tbody>
+                </table>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </main>
 
-<?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+<?php include_once('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>

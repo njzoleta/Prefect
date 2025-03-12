@@ -10,6 +10,7 @@
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/emergency.css" rel="stylesheet">
 
 </head>
 <body>
@@ -34,19 +35,19 @@
     </div><!-- End Page Title -->
 
     <div class="container">
-        <h1 class="mt-4">Quezon City Helpline</h1>
+        <h2 class="mt-4">Quezon City Helpline</h2>
         <h3 class="mt-3">Dial 122</h3>
         
 
-        <h1 class="mt-4">Emergency Operations Center</h1>
+        <h2 class="mt-4">Emergency Operations Center</h2>
         <h3 class="mt-3">(Globe)0977-031-2892</h3>
         <h3 class="mt-3">(Smart)0947-855-9929</h3>
         <h3 class="mt-3">8-988-4242 local 7245</h3>
 
-        <h1 class="mt-4">Emergency Medical Services / Search and Rescue</h1>
+        <h2 class="mt-4">Emergency Medical Services / Search and Rescue</h2>
         <h3 class="mt-3">(Smart)0947-884-7498</h3>
         <h3 class="mt-3">8928-4396</h3>
-        
+    </div>
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">

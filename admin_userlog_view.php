@@ -5,12 +5,26 @@ include('checklog.php');
 check_login();
 
 
-$query = "SELECT AccountId, name, year, course, section FROM bcp_sms3_user WHERE category = 'User'";
-$result = $mysqli->query($query);
+// Use the correct variable name for the database connection
+$query = "SELECT AccountId, name ,year, course , section FROM bcp_sms3_user"; 
+$result = $connect->query($query); // Change $mysqli to $connect
 
+// Check if the query was successful
 if (!$result) {
-    die("Query failed: " . $mysqli->error);
+    die("Query failed: " . $connect->error); // Change $mysqli to $connect
 }
+
+// Fetch results and handle them
+$accounts = [];
+while ($row = $result->fetch_assoc()) {
+    $accounts[] = $row; 
+}
+
+// Optionally, you can free the result set
+$result->free();
+
+// Close the database connection if it's not needed anymore
+$connect->close(); // Change $mysqli to $connect
 ?>
 
 <!DOCTYPE html>
@@ -67,26 +81,20 @@ if (!$result) {
                 </tr>
               </thead>
               <tbody>
-              <?php
-
-              $ret="SELECT * FROM bcp_sms3_user where AccountId "; 
-              $stmt= $mysqli->prepare($ret) ;
-              $stmt->execute() ;
-              $res=$stmt->get_result();
-              $cnt=1;
-              while($row=$res->fetch_object())
-              {
-              ?>
-                    <tr>
-                      <td><?php echo $cnt++; ?></td>
-                      <td><?php echo $row->AccountId; ?></td>
-                      <td><?php echo $row->name; ?></td>
-                      <td><?php echo $row->year; ?></td>
-                      <td><?php echo $row->course; ?></td>
-                      <td><?php echo $row->section; ?></td>
-                  </tr>
-                <?php } ?>
-              </tbody>
+          <?php
+          $cnt = 1; // Initialize counter
+          foreach ($accounts as $account) { // Use the $accounts array
+          ?>
+            <tr>
+              <td><?php echo $cnt++; ?></td>
+              <td><?php echo htmlspecialchars($account['AccountId']); ?></td>
+              <td><?php echo htmlspecialchars($account['name']); ?></td>
+              <td><?php echo htmlspecialchars($account['year']); ?></td>
+              <td><?php echo htmlspecialchars($account['course']); ?></td>
+              <td><?php echo htmlspecialchars($account['section']); ?></td>
+            </tr>
+          <?php } ?>
+          </tbody>
             </table>
           </div>
         </div>

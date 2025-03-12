@@ -53,7 +53,7 @@
           <div class="card info-card Student-card">
           <div class="card-body">
 
-                          <h5 class="card-title">PREFECT <span>| TODAY</span></h5>
+                          <h5 class="card-title">Incident <span>| TODAY</span></h5>
 
           <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -75,7 +75,7 @@
         <div class="card info-card student-card">
         <div class="card-body">
 
-                          <h5 class="card-title">PREFECT <span>| MONTHS</span></h5>
+                          <h5 class="card-title">Incident <span>| MONTHS</span></h5>
         
         <div class="d-flex align-items-center">
         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -96,7 +96,7 @@
         <div class="card info-card customers-card">
         <div class="card-body">
           
-                          <h5 class="card-title">PREFECT <span>| SEMESTER</span></h5>
+                          <h5 class="card-title">Incident <span>| SEMESTER</span></h5>
         
        <div class="d-flex align-items-center">
        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -656,7 +656,7 @@
 
 
         </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/chart.js/chart.umd.js"></script>
@@ -664,9 +664,9 @@
   <script src="assets/vendor/quill/quill.js"></script>
   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="C:\xampp\htdocs\Prefect\assets/vendor/php-email-form/validate.js"></script>
 
-  <script src="assets/js/main.js"></script>
+  <script src="C:\xampp\htdocs\Prefect\assets\js\main.js"></script>
 
 </body>
 </html>

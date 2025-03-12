@@ -1,14 +1,15 @@
 <?php
-$servername = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$dbname = "pref_bcp_sms3"; 
+// Database configuration
+$servername = getenv('DB_SERVER') ?: 'localhost'; 
+$AccountId = getenv('DB_ACCOUNT_ID') ?: 'root'; 
+$password = getenv('DB_PASSWORD') ?: ''; 
+$dbname = getenv('DB_NAME') ?: 'pref_bcp_sms3'; 
 
 
-$connect = new mysqli($servername, $username, $password, $dbname);
-$mysqli = new mysqli($servername, $username, $password, $dbname);
+$connect = new mysqli($servername, $AccountId, $password, $dbname);
 
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
+// Check connection
+if ($connect->connect_error) {
+    die("Connection failed: " . $connect->connect_error);
 }
 ?>

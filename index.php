@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['AccountId'] = $dbAccountId;
             $_SESSION['admin'] = '1'; 
             session_regenerate_id(true);
-            header("Location: admin.php");
+            header("Location:admin.php");
             exit();
         }
 

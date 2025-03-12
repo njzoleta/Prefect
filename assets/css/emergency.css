@@ -1,0 +1,67 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Container Styling */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+/* Header Styling */
+h2{
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-top: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h3 {
+    font-size: 1.2rem;
+    color: #34495e;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Adding spacing between sections */
+.mt-4 {
+    margin-top: 30px;
+}
+
+.mt-3 {
+    margin-top: 15px;
+}
+
+/* Adding a divider line between sections for clarity */
+h2 + h3 {
+    border-top: 2px solid #3498db;
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+/* Styling the phone numbers to stand out */
+h3 {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+/* Making sure the page is mobile responsive */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 90%;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+}

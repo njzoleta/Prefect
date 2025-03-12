@@ -11,7 +11,7 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-menu-button-wide"></i><span>Information</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-menu-button-wide"></i><span>Students Information</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
@@ -22,28 +22,6 @@
       <li>
         <a href="College.php">
           <i class="bi bi-circle"></i><span>COLLEGE STUDENTS</span>
-        </a>
-      </li>
-      <li>
-        <a href="seniorhighteach.php">
-          <i class="bi bi-circle"></i><span>SENIOR HIGH TEACHERS</span>
-        </a>
-      </li>
-
-      <li>
-        <a href="collegeteach.php">
-          <i class="bi bi-circle"></i><span>COLLEGE TEACHERS</span>
-        </a>
-      </li>
-
-      <li>
-        <a href="heads.php">
-          <i class="bi bi-circle"></i><span>HEADS</span>
-        </a>
-      </li>
-      <li>
-        <a href="staff.php">
-          <i class="bi bi-circle"></i><span>STAFFS</span>
         </a>
       </li>
 
