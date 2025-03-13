@@ -58,7 +58,7 @@ if (!$result) {
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/llog.css">
+
 </head>
 
 <body>
@@ -92,7 +92,7 @@ if (!$result) {
         <div class="col-12">
           <div class="card recent-sales overflow-auto">
             <div class="card-body">
-              <table class="table table-borderless datatable">
+              <table class="table table-borderless">
                 <thead>
                   <tr>
                     <th>#</th>

@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/llog.css">
 </head>
 
 <body>
@@ -47,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1 class="dashboard">Incident Log</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="user.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
                 <li class="breadcrumb-item active">Incident Log</li>
                 <li class="breadcrumb-item active">Manage</li>
             </ol>

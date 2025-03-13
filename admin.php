@@ -1,9 +1,144 @@
 <?php
-  session_start();
-  include('connect.php');
-  include('checklog.php');
-  check_login();
+session_start();
+include('connect.php'); // Ensure this file establishes a connection to your database
+include('checklog.php'); // Ensure this file checks if the user is logged in
+check_login();
+
+function getIncidentCounts($connect, $category) {
+    $counts = [];
+
+    // Weekly
+    $sql = "SELECT COUNT(*) as count FROM bcp_sms_log WHERE incident_date >= CURDATE() - INTERVAL 7 DAY AND category = ?";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $counts['week'] = $result->fetch_assoc()['count'];
+
+    // Monthly
+    $sql = "SELECT COUNT(*) as count FROM bcp_sms_log WHERE incident_date >= CURDATE() - INTERVAL 1 MONTH AND category = ?";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $counts['month'] = $result->fetch_assoc()['count'];
+
+    // Semester
+    $sql = "SELECT COUNT(*) as count FROM bcp_sms_log WHERE incident_date >= CURDATE() - INTERVAL 6 MONTH AND category = ?";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $counts['semester'] = $result->fetch_assoc()['count'];
+
+    return $counts;
+}
+
+// Fetch data for both categories
+$seniorHighCounts = getIncidentCounts($connect, 'Senior High');
+$collegeCounts = getIncidentCounts($connect, 'College');
+
+// Function to calculate change
+function calculateChange($currentCount, $previousCount) {
+    if ($currentCount > $previousCount) {
+        return 'Increase';
+    } elseif ($currentCount < $previousCount) {
+        return 'Decrease';
+    } else {
+        return 'No Change';
+    }
+}
+
+// Assuming you have previous counts stored (for demonstration purposes)
+$previousSeniorHighCounts = ['week' => 10, 'month' => 50, 'semester' => 150]; // Example previous counts
+$previousCollegeCounts = ['week' => 20, 'month' => 80, 'semester' => 150]; // Example previous counts
+
+// Calculate changes
+$seniorHighChange = [
+    'week' => calculateChange($seniorHighCounts['week'], $previousSeniorHighCounts['week']),
+    'month' => calculateChange($seniorHighCounts['month'], $previousSeniorHighCounts['month']),
+    'semester' => calculateChange($seniorHighCounts['semester'], $previousSeniorHighCounts['semester']),
+];
+
+// Function to calculate percentage change
+function calculatePercentageChange($currentCount, $previousCount) {
+    if ($previousCount == 0) {
+        return $currentCount > 0 ? '100%' : '0%';
+    }
+    return round((($currentCount - $previousCount) / $previousCount) * 100, 2) . '%';
+}
+
+// Calculate percentage changes
+$seniorHighPercentageChange = [
+    'week' => calculatePercentageChange($seniorHighCounts['week'], $previousSeniorHighCounts['week']),
+    'month' => calculatePercentageChange($seniorHighCounts['month'], $previousSeniorHighCounts['month']),
+    'semester' => calculatePercentageChange($seniorHighCounts['semester'], $previousSeniorHighCounts['semester']),
+];
+
+$collegeChange = [
+    'week' => calculateChange($collegeCounts['week'], $previousCollegeCounts['week']),
+    'month' => calculateChange($collegeCounts['month'], $previousCollegeCounts['month']),
+    'semester' => calculateChange($collegeCounts['semester'], $previousCollegeCounts['semester']),
+];
+
+// Calculate percentage changes for college
+$collegePercentageChange = [
+    'week' => calculatePercentageChange($collegeCounts['week'], $previousCollegeCounts['week']),
+    'month' => calculatePercentageChange($collegeCounts['month'], $previousCollegeCounts['month']),
+    'semester' => calculatePercentageChange($collegeCounts['semester'], $previousCollegeCounts['semester']),
+];
+
+// Fetch incident data for a specific period
+function getIncidentData($connect, $period, $category) {
+    $dateCondition = '';
+    switch ($period) {
+        case 'week':
+            $dateCondition = "WHERE incident_date >= CURDATE() - INTERVAL 7 DAY";
+            break;
+        case 'month':
+            $dateCondition = "WHERE incident_date >= CURDATE() - INTERVAL 1 MONTH";
+            break;
+        case 'semester':
+            $dateCondition = "WHERE incident_date >= CURDATE() - INTERVAL 6 MONTH";
+            break;
+    }
+
+    // Prepare the SQL query
+    $sql = "SELECT COUNT(*) as count, courseid FROM bcp_sms_log $dateCondition AND category = ? GROUP BY courseid";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    return $data;
+}
+
+// Fetch data for different periods and categories
+$seniorHighWeekData = getIncidentData($connect, 'week', 'Senior High');
+$collegeWeekData = getIncidentData($connect, 'week', 'College');
+
+$seniorHighMonthData = getIncidentData($connect, 'month', 'Senior High');
+$collegeMonthData = getIncidentData($connect, 'month', 'College');
+
+$seniorHighSemesterData = getIncidentData($connect, 'semester', 'Senior High');
+$collegeSemesterData = getIncidentData($connect, 'semester', 'College');
+
+// Convert data to JSON format for JavaScript
+$seniorHighWeekDataJson = json_encode($seniorHighWeekData);
+$collegeWeekDataJson = json_encode($collegeWeekData);
+
+$seniorHighMonthDataJson = json_encode($seniorHighMonthData);
+$collegeMonthDataJson = json_encode($collegeMonthData);
+
+$seniorHighSemesterDataJson = json_encode($seniorHighSemesterData);
+$collegeSemesterDataJson = json_encode($collegeSemesterData);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,22 +147,20 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Dashboard</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/admin.css" rel="stylesheet">
 
 </head>
 <body>
 
-
 <?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
-
-
 <?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
 
-
-  <main id="main" class="main">
+<main id="main" class="main">
     <div class="pagetitle">
       <h1 class="dashboard">Dashboard</h1>
       <nav>
@@ -38,625 +171,241 @@
       </nav>
     </div>    
 
+<section class="section dashboard py-5">
+  <h1 class="fs-1 fw-bold text-center title mb-5 text-primary">Senior High School</h1>
 
-
-          <section class="section dashboard">
-
-              <h1 class="fs-1 fw-bold text-center">SENIOR HIGHSCHOOL</h1>
-
-          <div class="row">
-
-          <div class="col-lg-8">
-          <div class="row">
-
-          <div class="col-xxl-4 col-md-6">
-          <div class="card info-card Student-card">
-          <div class="card-body">
-
-                          <h5 class="card-title">Incident <span>| TODAY</span></h5>
-
-          <div class="d-flex align-items-center">
-          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-          <i class="bi bi-people"></i>
-          
-          </div>
-          <div class="ps-3">
-
-                          <h6>145</h6>
-                          <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-        
-          </div>
-          </div>
-          </div>
-          </div>
-          </div>
-
-        <div class="col-xxl-4 col-md-6">
-        <div class="card info-card student-card">
-        <div class="card-body">
-
-                          <h5 class="card-title">Incident <span>| MONTHS</span></h5>
-        
-        <div class="d-flex align-items-center">
-        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-        <i class="bi bi-people"></i>
-
-        </div>
-        <div class="ps-3">
-                              <h6>560</h6>
-                              <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-        
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-
-        <div class="col-xxl-4 col-xl-12">
-        <div class="card info-card customers-card">
-        <div class="card-body">
-          
-                          <h5 class="card-title">Incident <span>| SEMESTER</span></h5>
-        
-       <div class="d-flex align-items-center">
-       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-       <i class="bi bi-people"></i>
-
-        </div>
-        <div class="ps-3">
-
-                    <h6>1244</h6>
-                    <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
-        
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-
-       <div class="col-12">
-       <div class="card">
-       <div class="card-body">
-
-                          <h5 class="card-title">Reports Cases<span>/ Semester</span></h5>
-        
-
-      <div id="reportsChart"></div>
-      <script>
-
-                            document.addEventListener("DOMContentLoaded", () => {
-                              new ApexCharts(document.querySelector("#reportsChart"), {
-                                series: [{
-                                  data: [31,23,25,50,30,60],
-                                }],
-                                
-                                chart: {
-                                  height: 700,
-                                  type: 'bar',
-                                  toolbar: {
-                                    show: false
-                                  },
-                                },
-                                markers: {
-                                  size: 2
-                                },
-                                colors: [ 'blue','black',],
-                                fill: {
-                                  type: "gradient",
-                                  gradient: {
-                                    shadeIntensity: 1,
-                                    opacityFrom: 0.5,
-                                    opacityTo: 1.5,
-                                    stops: [0, 500, 5000]
-                                  }
-                                },
-                                dataLabels: {
-                                  enabled: false
-                                },
-                                stroke: {
-                                  curve: 'smooth',
-                                  width: 10
-                                },
-                                xaxis: {
-                                  type: 'category',
-                                  categories: ["ICT","STEM","ABM","HE","HUMSS","GAS",]
-                                }
-                              }).render();
-                            });
-      </script>
-
-        
-      </div>
-      </div>
-      </div>
-
-      </div>
-       </div>
-
-       <div class="col-lg-4">
-
-      <div class="card">
-      <div class="card-body pb-0">
-
-                      <h5 class="card-title">Cases This <span>| Month</span></h5>
-                      <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
-       <script>
-
-                        document.addEventListener("DOMContentLoaded", () => {
-                          echarts.init(document.querySelector("#trafficChart")).setOption({
-                            tooltip: {
-                              trigger: 'item'
-                            },
-                            legend: {
-                              top: '5%',
-                              left: 'center'
-                            },
-                            series: [{
-                              name: 'CASES',
-                              type: 'pie',
-                              radius: ['40%', '70%'],
-                              avoidLabelOverlap: false,
-                              label: {
-                                show: false,
-                                position: 'center'
-                              },
-                              emphasis: {
-                                label: {
-                                  show: true,
-                                  fontSize: '18',
-                                  fontWeight: 'bold'
-                                }
-                              },
-                              labelLine: {
-                                show: false
-                              },
-                              data: [{
-                                  value: 1048,
-                                  name: 'ICT'
-                                },
-                                {
-                                  value: 735,
-                                  name: 'STEM'
-                                },
-                                {
-                                  value: 580,
-                                  name: 'GAS'
-                                },
-                                {
-                                  value: 484,
-                                  name: 'HE'
-                                },
-                                
-                                {
-                                  value: 300,
-                                  name: 'ABM'
-                                },
-                                {
-                                  value: 300,
-                                  name: 'HUMSS'
-                                },
-                                
-                                
-                              ]
-                            }]
-                          });
-                        });
-      </script>
-      </div>
-      </div>
-
-       <div class="card">
-        <div class="card-body pb-0">
-
-                                        <h5 class="card-title">Cases This <span>| Week</span></h5>
-
-        <div id="casechartsenior" style="min-height: 400px;" class="echart"></div>
-        <script>
-
-                                          document.addEventListener("DOMContentLoaded", () => {
-                                            echarts.init(document.querySelector("#casechartsenior")).setOption({
-                                              tooltip: {
-                                                trigger: 'item'
-                                              },
-                                              legend: {
-                                                top: '5%',
-                                                left: 'center'
-                                              },
-                                              series: [{
-                                                name: 'CASES',
-                                                type: 'pie',
-                                                radius: ['40%', '70%'],
-                                                avoidLabelOverlap: false,
-                                                label: {
-                                                  show: false,
-                                                  position: 'center'
-                                                },
-                                                emphasis: {
-                                                  label: {
-                                                    show: true,
-                                                    fontSize: '18',
-                                                    fontWeight: 'bold'
-                                                  }
-                                                },
-                                                labelLine: {
-                                                  show: false
-                                                },
-                                                data: [{
-                                                  value: 1048,
-                                                name: 'ICT'
-                                              },
-                                              {
-                                                value: 735,
-                                                name: 'STEM'
-                                              },
-                                              {
-                                                value: 580,
-                                                name: 'GAS'
-                                              },
-                                              {
-                                                value: 484,
-                                                name: 'HE'
-                                              },
-                                              
-                                              {
-                                                value: 300,
-                                                name: 'ABM'
-                                              },
-                                              {
-                                                value: 300,
-                                                name: 'HUMSS'
-                                              },
-
-                                                ]
-                                              }]
-                                            });
-                                          });
-        </script>
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-        </section>
-
-
-        <section class="section dashboard">
-
-              <h1 class="fs-1 fw-bold text-center">COLLEGE</h1>
-
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
         <div class="row">
-        
-
-        <div class="col-lg-8">
-        <div class="row">
-
-        <div class="col-xxl-4 col-md-6">
-        <div class="card info-card sales-card">
-        <div class="card-body">
-          
-                          <h5 class="card-title">Incident <span>| TODAY</span></h5>
-        
-        <div class="d-flex align-items-center">
-        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-        <i class="bi bi-people"></i>
-
-        </div>
-        <div class="ps-3">
-
-                          <h6>145</h6>
-                          <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-        
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-
-      <div class="col-xxl-4 col-md-6">
-      <div class="card info-card revenue-card">
-      <div class="card-body">
-
-                        <h5 class="card-title">Incident <span>| MONTHS</span></h5>
-        
-      <div class="d-flex align-items-center">
-      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-      <i class="bi bi-people"></i>
-      </div>
-      <div class="ps-3">
-
-                              <h6>3,264</h6>
-                              <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-        
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-
-      <div class="col-xxl-4 col-xl-12">
-      <div class="card info-card customers-card">
-      <div class="card-body">
-
-                        <h5 class="card-title">Incident <span>| SEMESTER</span></h5>
-        
-      <div class="d-flex align-items-center">
-      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-      <i class="bi bi-people"></i>
-      </div>
-      <div class="ps-3">
-
-                        <h6>1244</h6>
-                        <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
-        
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-
-                    <div class="col-12">
-                      <div class="card">
-                        <div class="card-body">
-                          <h5 class="card-title">Reports Cases<span>/ Semester</span></h5>
-        
-                          <!-- Line Chart -->
-                          <div id="Semestercollege"></div>
-        
-                          <script>
-                            document.addEventListener("DOMContentLoaded", () => {
-                              new ApexCharts(document.querySelector("#Semestercollege"), {
-                                series: [{
-                                  data: [31,23,25,50,60,31,23,25,50,30,60,102,]
-                                }],
-                                
-                                chart: {
-                                  height: 700,
-                                  type: 'bar',
-                                  toolbar: {
-                                    show: false
-                                  },
-                                },
-                                markers: {
-                                  size: 2
-                                },
-                                colors: [ '#2eca6a',],
-                                fill: {
-                                  type: "gradient",
-                                  gradient: {
-                                    shadeIntensity: 1,
-                                    opacityFrom: 0.5,
-                                    opacityTo: 1.5,
-                                    stops: [0, 500, 5000]
-                                  }
-                                },
-                                dataLabels: {
-                                  enabled: false
-                                },
-                                stroke: {
-                                  curve: 'smooth',
-                                  width: 10
-                                },
-                                xaxis: {
-                                  type: 'category',
-                                  categories: ["BSIT","BSTM","BSCIM","BSHM","BSOA","BSP",
-                                  "BSBA","BEEd,BPEd & BTLed","BSEDUC","BSCpE","BSENTREP","BSAIS",]
-                                }
-                              }).render();
-                            });
-                          </script>
-                          <!-- End Line Chart -->
-        
-                        </div>
-        
-                      </div>
-                    </div><!-- End Reports -->
-         
-                  </div>
-                </div><!-- End Left side columns -->
-        
-
-                <!-- Right side columns -->
-                <div class="col-lg-4">
-        
-                  <!-- Website Traffic -->
-                  <div class="card">
-                    <div class="card-body pb-0">
-                      <h5 class="card-title">Cases This <span>| Week</span></h5>
-                      <div id="weekcasescollege" style="min-height: 400px;" class="echart"></div>
-                      <script>
-                        document.addEventListener("DOMContentLoaded", () => {
-                          echarts.init(document.querySelector("#weekcasescollege")).setOption({
-                            tooltip: {
-                              trigger: 'item'
-                            },
-                            legend: {
-                              left: 'center'
-                            },
-                            series: [{
-                              name: 'CASES',
-                              type: 'pie',
-                              radius: ['30%', '50%'],
-                              avoidLabelOverlap: false,
-                              label: {
-                                show: false,
-                                position: 'center'
-                              },
-                              emphasis: {
-                                label: {
-                                  show: true,
-                                  fontSize: '18',
-                                  fontWeight: 'bold'
-                                }
-                              },
-                              labelLine: {
-                                show: false
-                              },
-                              data: [{
-                                  value: 30,
-                                  name: 'BSIT'
-                                },
-                                {
-                                  value: 50,
-                                  name: 'BSTM'
-                                },
-                                {
-                                  value: 580,
-                                  name: 'BSCRIM'
-                                },
-                                {
-                                  value: 484,
-                                  name: 'BSEDUC'
-                                },
-                                {
-                                  value: 120,
-                                  name: 'BSHM'
-                                },
-                                {
-                                  value: 484,
-                                  name: 'BSENTREP'
-                                },
-                                {
-                                  value: 40,
-                                  name: 'BSOA'
-                                },
-                                {
-                                  value: 150,
-                                  name: 'BSBA'
-                                },
-                                {
-                                  value: 484,
-                                  name: 'BSP'
-                                },
-                                {
-                                  value: 580,
-                                  name: 'BEEd,BPEd & BTLed'
-                                },
-                                {
-                                  value: 370,
-                                  name: 'BSCpE'
-                                },
-                                {
-                                  value: 484,
-                                  name: 'BSAIS'
-                                },
-                                
-                              ]
-                            }]
-                          });
-                        });
-                      </script>
-        
-                    </div>
-                  </div>
-<!--  Week case-->
-
-<!-- Month case -->
-                                    <div class="card">
-                                      <div class="card-body pb-0">
-                                        <h5 class="card-title">Cases This <span>| Month</span></h5>
-                                        <div id="monthcasecollege" style="min-height: 400px;" class="echart"></div>
-                                        <script>
-                                          document.addEventListener("DOMContentLoaded", () => {
-                                            echarts.init(document.querySelector("#monthcasecollege")).setOption({
-                                              tooltip: {
-                                                trigger: 'item'
-                                              },
-                                              legend: {
-                                                left: 'center'
-                                              },
-                                              series: [{
-                                                name: 'Access From',
-                                                type: 'pie',
-                                                radius: ['30%', '50%'],
-                                                avoidLabelOverlap: false,
-                                                label: {
-                                                  show: false,
-                                                  position: 'center'
-                                                },
-                                                emphasis: {
-                                                  label: {
-                                                    show: true,
-                                                    fontSize: '18',
-                                                    fontWeight: 'bold'
-                                                  }
-                                                },
-                                                labelLine: {
-                                                  show: false
-                                                },
-                                                data: [{
-                                                  value: 30,
-                                                  name: 'BSIT'
-                                                },
-                                                {
-                                                  value: 50,
-                                                  name: 'BSTM'
-                                                },
-                                                {
-                                                  value: 580,
-                                                  name: 'BSCRIM'
-                                                },
-                                                {
-                                                  value: 484,
-                                                  name: 'BSEDUC'
-                                                },
-                                                {
-                                                  value: 120,
-                                                  name: 'BSHM'
-                                                },
-                                                {
-                                                  value: 484,
-                                                  name: 'BSENTREP'
-                                                },
-                                                {
-                                                  value: 40,
-                                                  name: 'BSOA'
-                                                },
-                                                {
-                                                  value: 150,
-                                                  name: 'BSBA'
-                                                },
-                                                {
-                                                  value: 484,
-                                                  name: 'BSP'
-                                                },
-                                                {
-                                                  value: 580,
-                                                  name: 'BEEd,BPEd & BTLed'
-                                                },
-                                                {
-                                                  value: 370,
-                                                  name: 'BSCpE'
-                                                },
-                                                {
-                                                  value: 484,
-                                                  name: 'BSAIS'
-                                                },
-
-                                                ]
-                                              }]
-                                            });
-                                          });
-                                        </script>
-                          
-                                      </div>
-                                    </div><!-- End Website Traffic -->
-                      </div><!-- End sidebar recent posts-->
-                    </div>
-                </div><!-- End Right side columns -->
+          <!-- Weekly Report Card -->
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Week</h3>
+                <div id="seniorHighWeekChart" class="chart-placeholder"></div>
               </div>
-            </section>
-        
-          </main><!-- End #main -->
-   
+            </div>
+          </div>
 
-<!-- ======= Footer ======= -->
-<?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
-<!-- End Footer -->  
+          <!-- Monthly Report Card -->
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Month</h3>
+                <div id="seniorHighMonthChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Semester Report Card -->
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Semester</h3>
+                <div id="seniorHighSemesterChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Incidents Card for Week -->
+          <div class="col-xxl-4 col-md-6 mb-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Incidents <span>| Week</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6><?php echo $seniorHighCounts['week']; ?></h6>
+                    <span class="text-<?php echo $seniorHighChange['week'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                      <?php echo $seniorHighPercentageChange['week']; ?>
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                      <?php echo $seniorHighChange['week'] == 'Increase' ? 'increase' : 'decrease'; ?>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incidents Card for Month -->
+          <div class="col-xxl-4 col-md-6 mb-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Incidents <span>| Month</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6><?php echo $seniorHighCounts['month']; ?></h6>
+                    <span class="text-<?php echo $seniorHighChange['month'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                      <?php echo $seniorHighPercentageChange['month']; ?>
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                      <?php echo $seniorHighChange['month'] == 'Increase' ? 'increase' : 'decrease'; ?>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incidents Card for Semester -->
+          <div class="col-xxl-4 col-md-6 mb-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Incidents <span>| Semester</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6><?php echo $seniorHighCounts['semester']; ?></h6>
+                    <span class="text-<?php echo $seniorHighChange['semester'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                      <?php echo $seniorHighPercentageChange['semester']; ?>
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                      <?php echo $seniorHighChange['semester'] == 'Increase' ? 'increase' : 'decrease'; ?>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section dashboard py-5">
+  <h1 class="fs-1 fw-bold text-center text-primary mb-5">College</h1>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="row">
+          <!-- Weekly Report Card -->
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Week</h3>
+                <div id="collegeWeekChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Report Card -->
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Month</h3>
+                <div id="collegeMonthChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Semester Report Card -->
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Semester</h3>
+                <div id="collegeSemesterChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Incidents Card for Week -->
+          <div class="col-xxl-4 col-md-6 mb-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Incidents <span>| Week</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6><?php echo $collegeCounts['week']; ?></h6>
+                    <span class="text-<?php echo $collegeChange['week'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                      <?php echo $collegePercentageChange['week']; ?>
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                      <?php echo $collegeChange['week'] == 'Increase' ? 'increase' : 'decrease'; ?>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incidents Card for Month -->
+          <div class="col-xxl-4 col-md-6 mb-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Incidents <span>| Month</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6><?php echo $collegeCounts['month']; ?></h6>
+                    <span class="text-<?php echo $collegeChange['month'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                      <?php echo $collegePercentageChange['month']; ?>
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                      <?php echo $collegeChange['month'] == 'Increase' ? 'increase' : 'decrease'; ?>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incidents Card for Semester -->
+          <div class="col-xxl-4 col-md-6 mb-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Incidents <span>| Semester</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6><?php echo $collegeCounts['semester']; ?></h6>
+                    <span class="text-<?php echo $collegeChange['semester'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                      <?php echo $collegePercentageChange['semester']; ?>
+                    </span>
+                    <span class="text-muted small pt-2 ps-1">
+                      <?php echo $collegeChange['semester'] == 'Increase' ? 'increase' : 'decrease'; ?>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+  <!-- End Footer -->  
 
 
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/js/main.js"></script>
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/chart.js/chart.umd.js"></script>
@@ -664,9 +413,68 @@
   <script src="assets/vendor/quill/quill.js"></script>
   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-  <script src="C:\xampp\htdocs\Prefect\assets/vendor/php-email-form/validate.js"></script>
 
-  <script src="C:\xampp\htdocs\Prefect\assets\js\main.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const seniorHighWeekData = <?php echo $seniorHighWeekDataJson; ?>;
+      const collegeWeekData = <?php echo $collegeWeekDataJson; ?>;
 
+      const seniorHighMonthData = <?php echo $seniorHighMonthDataJson; ?>;
+      const collegeMonthData = <?php echo $collegeMonthDataJson; ?>;
+
+      const seniorHighSemesterData = <?php echo $seniorHighSemesterDataJson; ?>;
+      const collegeSemesterData = <?php echo $collegeSemesterDataJson; ?>;
+
+      // Define color mapping for courses
+      const colorMapping = {
+          'STEM': '#FF5733',
+          'ICT': '#33FF57',
+          'HE': '#3357FF',
+          'GAS': '#F1C40F',
+          'ABM': '#8E44AD',
+          'BSIT': '#7D3C98',
+          'BSTM': '#2980B9',
+          'BSOA': '#D35400',
+          'BSCRIM': '#C0392B',
+          'BSEDUC': '#27AE60',
+          'BSHM': '#F39C12',
+          'BSENTREP': '#8E44AD',
+          'BSBA': '#2C3E50',
+          'BSCpE': '#E67E22',
+          'BEEd': '#3498DB',
+          'BSP': '#9B59B6'
+      };
+
+      const createChart = (elementId, data) => {
+          const categories = data.map(item => item.courseid);
+          const seriesData = data.map(item => parseInt(item.count));
+          const colors = categories.map(course => colorMapping[course] || '#000000'); // Default to black if course not found
+
+          new ApexCharts(document.querySelector(`#${elementId}`), {
+              series: [{
+                  name: 'Inc idents',
+                  data: seriesData
+              }],
+              chart: {
+                  type: 'bar',
+                  height: 200
+              },
+              xaxis: {
+                  categories: categories
+              },
+              colors: colors // Set the colors for the series
+          }).render();
+      };
+
+      createChart('seniorHighWeekChart', seniorHighWeekData);
+      createChart('collegeWeekChart', collegeWeekData);
+
+      createChart('seniorHighMonthChart', seniorHighMonthData);
+      createChart('collegeMonthChart', collegeMonthData);
+
+      createChart('seniorHighSemesterChart', seniorHighSemesterData);
+      createChart('collegeSemesterChart', collegeSemesterData);
+  });
+  </script>
 </body>
 </html>

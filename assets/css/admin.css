@@ -1,0 +1,36 @@
+/* Custom styles for the dashboard */
+.section {
+  background-color: #f8f9fa; /* Light background for better contrast */
+}
+
+.card {
+  transition: transform 0.2s; /* Smooth hover effect */
+}
+
+.card:hover {
+  transform: scale(1.05); /* Slightly enlarge card on hover */
+}
+
+.card-title {
+  font-size: 1.25rem; /* Increase font size for titles */
+}
+
+.card-icon {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* White icon color */
+  width: 50px; /* Fixed width for icons */
+  height: 50px; /* Fixed height for icons */
+}
+
+.chart-placeholder {
+  height: 200px; /* Set a fixed height for charts */
+  background-color: #e9ecef; /* Light gray background for charts */
+  border-radius: 0.5rem; /* Rounded corners */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-title {
+    font-size: 1.1rem; /* Smaller title on mobile */
+  }
+}

@@ -10,7 +10,7 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
-    if ($action == 'create') {
+    if (isset($_POST['addincident'])) { // Check if the addincident button was clicked
         $Studentnumber_Id = $_POST['Studentnumber_Id'] ?? '';
         $Nameid = $_POST['Nameid'] ?? '';
         $yearid = $_POST['yearid'] ?? '';
@@ -21,32 +21,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $involve = $_POST['involve'] ?? '';
         $penalties = $_POST['Penalties'] ?? '';
 
-// Handle file upload
-$evidence = null; // Initialize evidence variable
-$target_dir = "evidencefile/"; // Relative path for the target directory
-$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]); // Create the full file path
+        // Determine the category based on yearid
+        $category = '';
+        if (in_array($yearid, ['Grade 11', 'Grade 12'])) {
+            $category = 'Senior High';
+        } else {
+            $category = 'College';
+        }
 
-// Ensure the target directory exists and is writable
-if (!file_exists($target_dir)) {
-    mkdir($target_dir, 0777, true);  // Creates the directory if it doesn't exist
-}
+        // Handle file upload
+        $evidence = null; // Initialize evidence variable
+        $target_dir = "evidencefile/"; // Relative path for the target directory
+        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]); // Create the full file path
 
-if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK) {
-    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        $evidence = $target_file; // Store the file path for database insertion
-    } else {
-        $errors[] = "Sorry, there was an error uploading your file. Please check the file path and permissions.";
-        error_log("File upload error: " . $_FILES['fileToUpload']['error']); // Logs detailed error
-    }
-} else {
-    $errors[] = "No file uploaded or there was an upload error.";
-}
+        // Ensure the target directory exists and is writable
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);  // Creates the directory if it doesn't exist
+        }
 
+        if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK) {
+            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                $evidence = $target_file; // Store the file path for database insertion
+            } else {
+                $errors[] = "Sorry, there was an error uploading your file. Please check the file path and permissions.";
+                error_log("File upload error: " . $_FILES['fileToUpload']['error']); // Logs detailed error
+            }
+        } else {
+            $errors[] = "No file uploaded or there was an upload error.";
+        }
 
         // If there are no errors, proceed to insert into the database
         if (empty($errors)) {
-            $stmt = $connect->prepare("INSERT INTO bcp_sms_log (Studentnumber_Id, Nameid, yearid, courseid, sectionid, severityid, offencesid, evidence, involve, penalties) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssssssss", $Studentnumber_Id, $Nameid, $yearid, $courseid, $sectionid, $severityid, $offencesid, $evidence, $involve, $penalties);
+            $stmt = $connect->prepare("INSERT INTO bcp_sms_log (Studentnumber_Id, Nameid, yearid, courseid, sectionid, severityid, offencesid, evidence, involve, penalties, incident_date, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
+            $stmt->bind_param("sssssssssss", $Studentnumber_Id, $Nameid, $yearid, $courseid, $sectionid, $severityid, $offencesid, $evidence, $involve, $penalties, $category);
             if ($stmt->execute()) {
                 echo "<script>alert('Incident logged successfully!');</script>";
             } else {
@@ -58,7 +65,6 @@ if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] == UPLOAD
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,6 +111,7 @@ if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] == UPLOAD
                 <label for="Nameid">Full Name</label>
                 <input type="text" class="form-control" id="Nameid" name="Nameid" value="<?php echo htmlspecialchars($Nameid); ?>">
             </div>
+
             <div class="form-group">
                 <label for="edityearid" class="form-label">Year/Grade</label>
                 <select class="form-select" id="edityearid" name="yearid">
@@ -127,6 +134,14 @@ if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] == UPLOAD
                     <option value="BSIT" <?php if ($courseid == 'BSIT') echo 'selected'; ?>>BSIT</option>
                     <option value="BSTM" <?php if ($courseid == 'BSTM') echo 'selected'; ?>>BSTM</option>
                     <option value="BSEDUC" <?php if ($courseid == 'BSEDUC') echo 'selected'; ?>>BSEDUC</option>
+                            <option value="BSCRIM" <?php if ($courseid == 'BSCRIM') echo 'selected'; ?>>BSCRIM</option>
+                            <option value="BSHM" <?php if ($courseid == 'BSHM') echo 'selected'; ?>>BSHM</option>
+                            <option value="BSENTREP" <?php if ($courseid == 'BSENTREP') echo 'selected'; ?>>BSENTREP</option>
+                            <option value="BSOA" <?php if ($courseid == 'BSOA') echo 'selected'; ?>>BSOA</option>
+                            <option value="BSBA" <?php if ($courseid == 'BSBA') echo 'selected'; ?>>BSBA</option>
+                            <option value="BSP" <?php if ($courseid == 'BSP') echo 'selected'; ?>>BSP</option>
+                            <option value="BEEd,BPEd& BTLed" <?php if ($courseid == 'BEEd,BPEd& BTLed') echo 'selected'; ?>>BEEd, BPEd & BTLed</option>
+                            <option value="BSCpE" <?php if ($courseid == 'BSCpE') echo 'selected'; ?>>BSCpE</option>
                 </select>
             </div>
             <div class="form-group">

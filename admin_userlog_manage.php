@@ -26,9 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $year = $_POST['year'];
         $course = $_POST['course'];
         $section = $_POST['section'];
+        $password = $_POST['password'];
 
-        $stmt = $connect->prepare("UPDATE bcp_sms3_user SET name = ?, year = ?, course = ?, section = ? WHERE AccountId = ?");
-        $stmt->bind_param("sssss", $name, $year, $course, $section, $AccountId);
+        $stmt = $connect->prepare("UPDATE bcp_sms3_user SET name = ?, year = ?, course = ?, section = ? , password =? WHERE AccountId = ?");
+        $stmt->bind_param("ssssss", $name, $year, $course, $section,$password , $AccountId);
         if ($stmt->execute()) {
             $_SESSION['message'] = 'Account updated successfully!';
         } else {
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Query to fetch user data
-$query = "SELECT AccountId, name, year, course, section FROM bcp_sms3_user WHERE category = 'User'";
+$query = "SELECT AccountId, name, year, course, section ,password FROM bcp_sms3_user WHERE category = 'User'";
 $result = $connect->query($query);
 
 if (!$result) {
@@ -96,6 +97,7 @@ if (!$result) {
                           <th>Year</th>
                           <th>Course</th>
                           <th>Section</th>
+                          <th>Password</th>
                           <th>Actions</th>
                       </tr>
                   </thead>
@@ -113,10 +115,11 @@ if (!$result) {
                 <td><?php echo htmlspecialchars($row->year); ?></td>
                 <td><?php echo htmlspecialchars($row->course); ?></td>
                 <td><?php echo htmlspecialchars($row->section); ?></td>
+                <td><?php echo htmlspecialchars($row->password); ?></td>
                 <td>
                     <!-- Edit Button -->
                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal" 
-                            onclick="loadEditData('<?php echo $row->AccountId; ?>', '<?php echo addslashes($row->name); ?>', '<?php echo addslashes($row->year); ?>', '<?php echo addslashes($row->course); ?>', '<?php echo addslashes($row->section); ?>')">Edit</button>
+                            onclick="loadEditData('<?php echo $row->AccountId; ?>', '<?php echo addslashes($row->name); ?>', '<?php echo addslashes($row->year); ?>', '<?php echo addslashes($row->course); ?>', '<?php echo addslashes($row->section); ?>', '<?php echo addslashes($row->password); ?>')">Edit</button>
                     <!-- Delete Button -->
                     <form method="POST" style="display:inline-block;" id="deleteForm_<?php echo $row->AccountId; ?>" onsubmit="return confirmDelete('<?php echo $row->AccountId; ?>');">
                         <input type="hidden" name="AccountId" value='<?php echo $row->AccountId; ?>'>
@@ -167,6 +170,10 @@ if (!$result) {
               <label for="editSection">Section</label>
               <input type="text" class="form-control" id="editSection" name="section" required>
             </div>
+            <div class="form-group">
+              <label for="editPassword">Password</label>
+              <input type="password" class="form-control" id="editPassword" name="password" required>
+            </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="submit" class="btn btn-primary">Save changes</button>
@@ -181,12 +188,13 @@ if (!$result) {
 <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
 
 <script>
-function loadEditData(AccountId, name, year, course, section) {
+function loadEditData(AccountId, name, year, course, section, password) {
   document.getElementById('editAccountId').value = AccountId;
   document.getElementById('editName').value = name;
   document.getElementById('editYear').value = year;
   document.getElementById('editCourse').value = course;
   document.getElementById('editSection').value = section;
+  document.getElementById('editPassword').value = password;
   
   // Manually trigger the modal display (for Bootstrap 5)
   var editModal = new bootstrap.Modal(document.getElementById('editModal'));
