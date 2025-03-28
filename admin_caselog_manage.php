@@ -7,19 +7,9 @@ check_login();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
 
-    if ($action == 'delete') {
-        $Studentnumber_Id = $_POST['Studentnumber_Id'];
-        $stmt = $connect->prepare("DELETE FROM bcp_sms_log WHERE Studentnumber_Id = ?");
-        $stmt->bind_param("s", $Studentnumber_Id);
-        if ($stmt->execute()) {
-            $_SESSION['message'] = 'Account deleted successfully!';
-        } else {
-            error_log("Database error: " . $stmt->error);
-            $_SESSION['message'] = "Error deleting account.";
-        }
+
         $stmt->close();
     }
-}
 ?>
 
 <!DOCTYPE html>
@@ -71,22 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                             ?>
                             <table class="table table-borderless datatable">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Student number</th>
-                                        <th>Name</th>
-                                        <th>Year</th>
-                                        <th>Course</th>
-                                        <th>Section</th>
-                                        <th>Severity</th>
-                                        <th>Offence</th>
-                                        <th>Involve</th>
-                                        <th>Penalties</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                            <thead>
+    <tr>
+        <th data-sortable="true">#</th>
+        <th data-sortable="true">Student number</th>
+        <th data-sortable="true">Name</th>
+        <th data-sortable="true">Year</th>
+        <th data-sortable="true">Course</th>
+        <th data-sortable="true">Severity</th>
+        <th data-sortable="true">Penalties</th>
+        <th data-sortable="true">Date</th>
+        <th data-sortable="true">Status</th>
+        <th data-sortable="false">Action</th>  <!-- Disable sorting for actions -->
+    </tr>
+</thead>
                                 <tbody>
                                 <?php
                                 $ret = "SELECT * FROM bcp_sms_log";
@@ -104,11 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <td><?php echo htmlspecialchars($row->Nameid); ?></td>
                                             <td><?php echo htmlspecialchars($row->yearid); ?></td>
                                             <td><?php echo htmlspecialchars($row->courseid); ?></td>
-                                            <td><?php echo htmlspecialchars($row->sectionid); ?></td>
                                             <td><?php echo htmlspecialchars($row->severityid); ?></td>
-                                            <td><?php echo htmlspecialchars($row->offencesid); ?></td>
-                                            <td><?php echo htmlspecialchars($row->involve); ?></td>
                                             <td><?php echo htmlspecialchars($row->penalties); ?></td>
+                                            <td><?php echo htmlspecialchars($row->date_created); ?></td>
                                             <td>
     <?php
     // Determine the badge class based on the status
@@ -129,25 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     data-Nameid='<?php echo $row->Nameid; ?>'
                                                     data-yearid='<?php echo $row->yearid; ?>' 
                                                     data-courseid='<?php echo $row->courseid; ?>'
-                                                    data-sectionid='<?php echo $row->sectionid; ?>' 
                                                     data-severityid='<?php echo $row->severityid; ?>'
-                                                    data-offencesid='<?php echo $row->offencesid; ?>' 
-                                                    data-involve='<?php echo $row->involve; ?>'
                                                     data-penalties='<?php echo $row->penalties; ?>'
                                                     data-Status='<?php echo $row->Status; ?>'>
                                                     Edit
                                                 </button>
-                                                <form method="POST" style="display:inline-block;" id="deleteForm_<?php echo $row->Studentnumber_Id; ?>" onsubmit="return confirmDelete(<?php echo $row->Studentnumber_Id; ?>);">
-        <input type="hidden" name="Studentnumber_Id" value='<?php echo $row->Studentnumber_Id; ?>'>
-        <input type="hidden" name="action" value="delete">
-        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-    </form>
-    <script>
-    function confirmDelete(studentId) {
-        // Show the confirmation dialog
-        return confirm('Are you sure you want to delete this record?');
-    }
-</script>
+ 
 
                                             </td>
                                         </tr>
@@ -218,10 +191,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </select>
             </div>
                     <div class="mb-3">
-                        <label for="editSectionid" class="form-label">Section</label>
-                        <input type="text" class="form-control" id="editSectionid" name="sectionid">
-                    </div>
-                    <div class="mb-3">
                         <label for="editseverityid" class="form-label">Severity</label>
                         <select class="form-select" id="editseverityid" name="severityid">
                             <option value="Minor">Minor</option>
@@ -263,27 +232,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Incident</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this incident log?</p>
-            </div>
-            <div class="modal-footer">
-                <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" id="deleteForm">
-                    <input type="hidden" name="Studentnumber_Id" id="deleteStudentnumber_Id">
-                    <input type="hidden" name="action" value="delete">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -369,9 +317,19 @@ function loadTableData() {
 }
 
 
-$('.deleteBtn').on('click', function() {
-    var studentnumber = $(this).data('Studentnumber_Id'); // Ensure this matches the data attribute
-    $('#deleteStudentnumber_Id').val(studentnumber);
+document.addEventListener("DOMContentLoaded", function () {
+    var table = new simpleDatatables.DataTable(".datatable", {
+        searchable: true, // Enables search
+        fixedHeight: true, // Fixes height for better UI
+        perPage: 10, // Number of records per page
+        sortable: true, // Enables sorting
+        labels: {
+            placeholder: "Search...", // Search placeholder text
+            perPage: "Show {select} entries", // Per-page dropdown
+            noRows: "No records found", // Message when no rows exist
+            info: "Showing {start} to {end} of {rows} entries" // Info text
+        }
+    });
 });
 
 

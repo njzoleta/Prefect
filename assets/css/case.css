@@ -1,0 +1,105 @@
+/* General form styling */
+form {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Form labels */
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Input fields */
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Form grid layout */
+.field-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+/* Full-width statement field */
+.statement {
+    grid-column: span 2;
+    min-height: 100px;
+}
+
+/* Full-width evidence section */
+.evidence {
+    grid-column: span 2;
+}
+
+/* Styling for buttons */
+.btn-success {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* Adjust specific fields */
+.text1, .text7 {
+    width: 100%;
+}
+
+.text2, .text3, .text8, .text9 {
+    width: 48%;
+}
+
+.text4, .text11 {
+    width: 48%;
+    text-align: center;
+}
+
+.text5, .text12 {
+    width: 100%;
+}
+
+/* Report Date */
+.report {
+    width: 48%;
+}
+
+/* Textarea */
+textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Make form responsive */
+@media screen and (max-width: 768px) {
+    .field-container {
+        grid-template-columns: 1fr;
+    }
+
+    .text2, .text3, .text8, .text9, .text4, .text11 {
+        width: 100%;
+    }
+}
+
+

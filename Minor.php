@@ -4,7 +4,7 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-$minorId = $minor = '';
+$minorId = $minorcode =$minor = '';
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -12,11 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'create' || $action == 'update') {
         $minorId = $_POST['minorId'] ?? '';
+        $minorcode = $_POST['minorcode'] ?? '';
         $minor = $_POST['minor'] ?? '';
 
         if ($action == 'create') {
-            $stmt = $connect->prepare("INSERT INTO bcp_sms3_minor (minorId, minor) VALUES (?, ?)");
-            $stmt->bind_param("ss", $minorId, $minor);
+            $stmt = $connect->prepare("INSERT INTO bcp_sms3_minor (minorId,minorcode,minor) VALUES (?,?,?)");
+            $stmt->bind_param("sss", $minorId,$minorcode ,$minor);
             if ($stmt->execute()) {
                 echo "<script>alert('Minor rules added successfully!');</script>";
             } else {
@@ -53,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$query = "SELECT minorId, minor FROM bcp_sms3_minor";
+$query = "SELECT minorId,minorcode,minor FROM bcp_sms3_minor";
 $result = mysqli_query($connect, $query);
 ?>
 
@@ -94,6 +95,7 @@ $result = mysqli_query($connect, $query);
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
+                    <th>Code</th>
                     <th>OFFENSE</th>
                     <th>Action</th>
                 </tr>
@@ -103,6 +105,7 @@ $result = mysqli_query($connect, $query);
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>
+                        <td>{$row['minorcode']}</td>
                         <td>{$row['minor']}</td>
                         <td>
                             <button class='btn btn-warning btn-sm editBtn' 
@@ -137,6 +140,12 @@ $result = mysqli_query($connect, $query);
                             </button>
                         </div>
                         <div class="modal-body">
+                        <input type="hidden" name="action" value="create">
+                            <div class="form-group">
+                                <label>Minor Code</label>
+                                <input type="text" name="minorcode" class="form-control" required>
+                                <span class="text-danger"><?php echo $minorcode; ?></span>
+                            </div>
                             <input type="hidden" name="action" value="create">
                             <div class="form-group">
                                 <label>New Minor Rule</label>

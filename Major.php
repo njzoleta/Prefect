@@ -4,7 +4,7 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-$majorId = $major = '';
+$majorId =$majorcode= $major = '';
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -12,11 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'create' || $action == 'update') {
         $majorId = $_POST['majorId'] ?? '';
+        $majorcode = $_POST['majorcode'] ?? '';
         $major = $_POST['major'] ?? '';
 
         if ($action == 'create') {
-            $stmt = $connect->prepare("INSERT INTO bcp_sms3_major (majorId, major) VALUES (?, ?)");
-            $stmt->bind_param("ss", $majorId, $major);
+            $stmt = $connect->prepare("INSERT INTO bcp_sms3_major (majorId, majorcode,major) VALUES (?,?, ?)");
+            $stmt->bind_param("sss", $majorId,$majorcode, $major);
             if ($stmt->execute()) {
                 echo "<script>alert('major rules added successfully!');</script>";
             } else {
@@ -53,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$query = "SELECT majorId, major FROM bcp_sms3_major";
+$query = "SELECT majorId, majorcode,major FROM bcp_sms3_major";
 $result = mysqli_query($connect, $query);
 ?>
 
@@ -94,6 +95,7 @@ $result = mysqli_query($connect, $query);
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
+                    <th>CODE</th>
                     <th>OFFENSE</th>
                     <th>Action</th>
                 </tr>
@@ -103,6 +105,7 @@ $result = mysqli_query($connect, $query);
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>
+                        <td>{$row['majorcode']}</td>
                         <td>{$row['major']}</td>
                         <td>
                             <button class='btn btn-warning btn-sm editBtn' 

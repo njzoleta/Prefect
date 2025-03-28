@@ -50,8 +50,8 @@ function calculateChange($currentCount, $previousCount) {
 }
 
 // Assuming you have previous counts stored (for demonstration purposes)
-$previousSeniorHighCounts = ['week' => 10, 'month' => 50, 'semester' => 150]; // Example previous counts
-$previousCollegeCounts = ['week' => 20, 'month' => 80, 'semester' => 150]; // Example previous counts
+$previousSeniorHighCounts = ['week' => 5, 'month' => 10, 'semester' => 25]; // Example previous counts
+$previousCollegeCounts = ['week' => 5, 'month' => 10, 'semester' => 50]; // Example previous counts
 
 // Calculate changes
 $seniorHighChange = [
@@ -137,6 +137,53 @@ $collegeMonthDataJson = json_encode($collegeMonthData);
 
 $seniorHighSemesterDataJson = json_encode($seniorHighSemesterData);
 $collegeSemesterDataJson = json_encode($collegeSemesterData);
+
+
+
+
+
+function getseverityidCounts($connect, $category, $period) {
+  $counts = ['minor' => 0, 'major' => 0, 'grave' => 0];
+
+  $dateCondition = "";
+  if ($period === 'week') {
+      $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 7 DAY";
+  } elseif ($period === 'month') {
+      $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 1 MONTH";
+  } elseif ($period === 'semester') {
+      $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 6 MONTH";
+  }
+
+  $sql = "SELECT severityid, COUNT(*) as count FROM bcp_sms_log WHERE category = ? $dateCondition GROUP BY severityid";
+  $stmt = $connect->prepare($sql);
+  $stmt->bind_param("s", $category);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  while ($row = $result->fetch_assoc()) {
+      $counts[strtolower($row['severityid'])] = $row['count'];
+  }
+
+  return $counts;
+}
+
+// Fetch severityid data for Senior High and College
+$seniorHighWeek = getseverityidCounts($connect, 'Senior High', 'week');
+$seniorHighMonth = getseverityidCounts($connect, 'Senior High', 'month');
+$seniorHighSemester = getseverityidCounts($connect, 'Senior High', 'semester');
+
+$collegeWeek = getseverityidCounts($connect, 'College', 'week');
+$collegeMonth = getseverityidCounts($connect, 'College', 'month');
+$collegeSemester = getseverityidCounts($connect, 'College', 'semester');
+
+// Convert data to JSON for JavaScript
+$seniorHighWeekJson = json_encode(array_values($seniorHighWeek));
+$seniorHighMonthJson = json_encode(array_values($seniorHighMonth));
+$seniorHighSemesterJson = json_encode(array_values($seniorHighSemester));
+
+$collegeWeekJson = json_encode(array_values($collegeWeek));
+$collegeMonthJson = json_encode(array_values($collegeMonth));
+$collegeSemesterJson = json_encode(array_values($collegeSemester));
 ?>
 
 <!DOCTYPE html>
@@ -152,7 +199,7 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
-  <link href="assets/css/admin.css" rel="stylesheet">
+  <link href="./assets/css/admin.css" rel="stylesheet">
 
 </head>
 <body>
@@ -178,46 +225,16 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="row">
-          <!-- Weekly Report Card -->
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Week</h3>
-                <div id="seniorHighWeekChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly Report Card -->
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Month</h3>
-                <div id="seniorHighMonthChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Semester Report Card -->
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Semester</h3>
-                <div id="seniorHighSemesterChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div class="row">
           <!-- Incidents Card for Week -->
-          <div class="col-xxl-4 col-md-6 mb-4">
+          <div class="col-xxl-4 col-md-4 mb-4">
             <div class="card info-card sales-card">
               <div class="card-body">
                 <h5 class="card-title">Incidents <span>| Week</span></h5>
                 <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bar-chart"></i>
+                  <div class=" d-flex align-items-center justify-content-center">
+                    <i class=""></i>
                   </div>
                   <div class="ps-3">
                     <h6><?php echo $seniorHighCounts['week']; ?></h6>
@@ -234,13 +251,13 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
           </div>
 
           <!-- Incidents Card for Month -->
-          <div class="col-xxl-4 col-md-6 mb-4">
+          <div class="col-xxl-4 col-md-4 mb-4">
             <div class="card info-card sales-card">
               <div class="card-body">
                 <h5 class="card-title">Incidents <span>| Month</span></h5>
                 <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bar-chart"></i>
+                  <div class=" d-flex align-items-center justify-content-center">
+                    <i class=""></i>
                   </div>
                   <div class="ps-3">
                     <h6><?php echo $seniorHighCounts['month']; ?></h6>
@@ -257,13 +274,13 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
           </div>
 
           <!-- Incidents Card for Semester -->
-          <div class="col-xxl-4 col-md-6 mb-4">
+          <div class="col-xxl-4 col-md-4 mb-4">
             <div class="card info-card sales-card">
               <div class="card-body">
                 <h5 class="card-title">Incidents <span>| Semester</span></h5>
                 <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bar-chart"></i>
+                  <div class=" d-flex align-items-center justify-content-center">
+                    <i class=""></i>
                   </div>
                   <div class="ps-3">
                     <h6><?php echo $seniorHighCounts['semester']; ?></h6>
@@ -278,7 +295,44 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
               </div>
             </div>
           </div>
+
+        
+          <!-- Weekly Report Card -->
+          <div class="col-md-12 mb-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Week</h3>
+                <div id="seniorHighWeekChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Report Card -->
+          <div class="col-md-12 mb-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Month</h3>
+                <div id="seniorHighMonthChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Semester Report Card -->
+          <div class="col-md-12 mb-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Semester</h3>
+                <div id="seniorHighSemesterChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <h1>Senior High School severityid Distribution</h1>
+<h2>Week</h2><div id="seniorHighWeekChart"></div>
+<h2>Month</h2><div id="seniorHighMonthChart"></div>
+<h2>Semester</h2><div id="seniorHighSemesterChart"></div>
+
       </div>
     </div>
   </div>
@@ -291,46 +345,16 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="row">
-          <!-- Weekly Report Card -->
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Week</h3>
-                <div id="collegeWeekChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly Report Card -->
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Month</h3>
-                <div id="collegeMonthChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Semester Report Card -->
-          <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Semester</h3>
-                <div id="collegeSemesterChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div class="row">
           <!-- Incidents Card for Week -->
-          <div class="col-xxl-4 col-md-6 mb-4">
+          <div class="col-xxl-4 col-md-4 mb-4">
             <div class="card info-card sales-card">
               <div class="card-body">
                 <h5 class="card-title">Incidents <span>| Week</span></h5>
                 <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bar-chart"></i>
+                  <div class=" d-flex align-items-center justify-content-center">
+                    <i class=""></i>
                   </div>
                   <div class="ps-3">
                     <h6><?php echo $collegeCounts['week']; ?></h6>
@@ -347,13 +371,13 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
           </div>
 
           <!-- Incidents Card for Month -->
-          <div class="col-xxl-4 col-md-6 mb-4">
+          <div class="col-xxl-4 col-md-4 mb-4">
             <div class="card info-card sales-card">
               <div class="card-body">
                 <h5 class="card-title">Incidents <span>| Month</span></h5>
                 <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bar-chart"></i>
+                  <div class=" d-flex align-items-center justify-content-center">
+                    <i class=""></i>
                   </div>
                   <div class="ps-3">
                     <h6><?php echo $collegeCounts['month']; ?></h6>
@@ -370,13 +394,13 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
           </div>
 
           <!-- Incidents Card for Semester -->
-          <div class="col-xxl-4 col-md-6 mb-4">
+          <div class="col-xxl-4 col-md-4 mb-4">
             <div class="card info-card sales-card">
               <div class="card-body">
                 <h5 class="card-title">Incidents <span>| Semester</span></h5>
                 <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bar-chart"></i>
+                  <div class="d-flex align-items-center justify-content-center">
+                    <i class=""></i>
                   </div>
                   <div class="ps-3">
                     <h6><?php echo $collegeCounts['semester']; ?></h6>
@@ -392,6 +416,44 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
             </div>
           </div>
         </div>
+          <!-- Weekly Report Card -->
+          <div class="col-md-12 mb-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Week</h3>
+                <div id="collegeWeekChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Report Card -->
+          <div class="col-md-12 mb-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Month</h3>
+                <div id="collegeMonthChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Semester Report Card -->
+          <div class="col-md-12 mb-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h3 class="card-title text-center">Report / Semester</h3>
+                <div id="collegeSemesterChart" class="chart-placeholder"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <h1>College severityid Distribution</h1>
+<h2>Week</h2><div id="collegeWeekChart"></div>
+<h2>Month</h2><div id="collegeMonthChart"></div>
+<h2>Semester</h2><div id="collegeSemesterChart"></div>
+
+ 
       </div>
     </div>
   </div>
@@ -475,6 +537,43 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
       createChart('seniorHighSemesterChart', seniorHighSemesterData);
       createChart('collegeSemesterChart', collegeSemesterData);
   });
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Data from PHP
+    const seniorHighWeekData = <?php echo $seniorHighWeekJson; ?>;
+    const seniorHighMonthData = <?php echo $seniorHighMonthJson; ?>;
+    const seniorHighSemesterData = <?php echo $seniorHighSemesterJson; ?>;
+
+    const collegeWeekData = <?php echo $collegeWeekJson; ?>;
+    const collegeMonthData = <?php echo $collegeMonthJson; ?>;
+    const collegeSemesterData = <?php echo $collegeSemesterJson; ?>;
+
+    const categories = ["Minor", "Major", "Grave"];
+
+    // Function to create a pie chart
+    function createPieChart(elementId, data) {
+        new ApexCharts(document.querySelector(`#${elementId}`), {
+            series: data,
+            chart: {
+                type: 'pie',
+                height: 350
+            },
+            labels: categories,
+            colors: ["#2E86C1", "#F39C12", "#C0392B"]
+        }).render();
+    }
+
+    // Create charts for Senior High
+    createPieChart("seniorHighWeekChart", seniorHighWeekData);
+    createPieChart("seniorHighMonthChart", seniorHighMonthData);
+    createPieChart("seniorHighSemesterChart", seniorHighSemesterData);
+
+    // Create charts for College
+    createPieChart("collegeWeekChart", collegeWeekData);
+    createPieChart("collegeMonthChart", collegeMonthData);
+    createPieChart("collegeSemesterChart", collegeSemesterData);
+});
   </script>
 </body>
 </html>

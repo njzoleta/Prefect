@@ -10,22 +10,10 @@
   </li>
 
   <li class="nav-item">
-    <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-menu-button-wide"></i><span>Students Information</span><i class="bi bi-chevron-down ms-auto"></i>
+    <a class="nav-link"href="studentinfo.php">
+      <i class="bi bi-person"></i>
+      <span>Student Information</span>
     </a>
-    <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-      <li>
-        <a href="Seniorhigh.php">
-          <i class="bi bi-circle"></i><span>SENIOR HIGHSCHOOL STUDENTS</span>
-        </a>
-      </li>
-      <li>
-        <a href="College.php">
-          <i class="bi bi-circle"></i><span>COLLEGE STUDENTS</span>
-        </a>
-      </li>
-
-    </ul>
   </li>
 
   <li class="nav-item">
@@ -75,6 +63,19 @@
   </li>
 
   <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#awww-nav" data-bs-toggle="collapse" href="#">
+      <i class="bi bi-layout-text-window-reverse"></i><span>Guidance</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+    <ul id="awww-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+      <li>
+        <a href="conduct.php">
+          <i class="bi bi-circle"></i><span>Referral Slip</span>
+        </a>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
       <i class="bi bi-bar-chart"></i><span>Incident Log</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
@@ -101,23 +102,16 @@
 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#icon-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-people"></i><span>User Log</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-people"></i><span>Case Report</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="icon-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
-        <a href="admin_userlog_add.php">
+        <a href="admin_case_add.php">
           <i class="bi bi-circle"></i><span>Add</span>
         </a>
       </li>
-
       <li>
-        <a href="admin_userlog_view.php">
-          <i class="bi bi-circle"></i><span>View</span>
-        </a>
-      </li>
-
-      <li>
-        <a href="admin_userlog_manage.php">
+        <a href="admin_case_manage.php">
           <i class="bi bi-circle"></i><span>Manage</span>
         </a>
       </li>

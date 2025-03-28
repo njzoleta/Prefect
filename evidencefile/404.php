@@ -32,7 +32,7 @@
     <div class="error-container">
         <h1>Oops! Page Not Found (404)</h1>
         <p>Sorry, the page you are looking for doesn't exist.</p>
-        <p><a href="user.php">Go back to the home page</a></p>
+        <p><a href="admin.php">Go back to the home page</a></p>
     </div>
 </body>
 </html>

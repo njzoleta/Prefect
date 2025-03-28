@@ -4,7 +4,7 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-$graveId = $grave = '';
+$graveId = $gravecode = $grave = '';
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -12,11 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'create' || $action == 'update') {
         $graveId = $_POST['graveId'] ?? '';
+        $gravecode = $_POST['gravecode'] ?? '';
         $grave = $_POST['grave'] ?? '';
 
         if ($action == 'create') {
-            $stmt = $connect->prepare("INSERT INTO bcp_sms3_grave (graveId, grave) VALUES (?, ?)");
-            $stmt->bind_param("ss", $graveId, $grave);
+            $stmt = $connect->prepare("INSERT INTO bcp_sms3_grave (graveId, gravecode,grave) VALUES (?, ?,?)");
+            $stmt->bind_param("sss", $graveId, $gravecode, $grave);
             if ($stmt->execute()) {
                 echo "<script>alert('grave rules added successfully!');</script>";
             } else {
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if ($action == 'update') {
-            $stmt = $connect->prepare("UPDATE bcp_sms3_grave SET grave=? WHERE graveId=?");
+            $stmt = $connect->prepare("UPDATE bcp_sms3_grave SET  grave=? WHERE graveId=?");
             $stmt->bind_param("ss", $grave, $graveId);
             if ($stmt->execute()) {
                 echo "<script>alert('Account updated successfully!');</script>";
@@ -53,11 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$query = "SELECT graveId, grave FROM bcp_sms3_grave";
+$query = "SELECT graveId,gravecode, grave FROM bcp_sms3_grave";
 $result = mysqli_query($connect, $query);
 ?>
-
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -94,6 +95,7 @@ $result = mysqli_query($connect, $query);
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
+                    <th>Code</th>
                     <th>OFFENSE</th>
                     <th>Action</th>
                 </tr>
@@ -103,6 +105,7 @@ $result = mysqli_query($connect, $query);
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>
+                        <td>{$row['gravecode']}</td>
                         <td>{$row['grave']}</td>
                         <td>
                             <button class='btn btn-warning btn-sm editBtn' 
@@ -139,11 +142,21 @@ $result = mysqli_query($connect, $query);
                         <div class="modal-body">
                             <input type="hidden" name="action" value="create">
                             <div class="form-group">
+                                <label>Grave Code</label>
+                                <input type="text" name="gravecode" class="form-control" required>
+                                <span class="text-danger"><?php echo $gravecode; ?></span>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="create">
+                            <div class="form-group">
                                 <label>New grave Rule</label>
                                 <input type="text" name="grave" class="form-control" required>
                                 <span class="text-danger"><?php echo $grave; ?></span>
                             </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Add grave Rule</button>
                         </div>

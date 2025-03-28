@@ -3,6 +3,12 @@
   include('connect.php');
   include('checklog.php');
   check_login();
+
+  // Fetch data based on category
+  $senior_query = "SELECT id, student_number, first_name, last_name, year, course, section FROM bcp_sms3_student WHERE category = 'Senior High'";
+
+
+  $senior_result = mysqli_query($connect, $senior_query);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,41 +56,35 @@
 
 
 
-
               <div class="col-12">
               <div class="card recent-sales overflow-auto">
                 <div class="card-body">
             <table class="table table-borderless datatable">
-              <thead>
+            <thead>
                 <tr>
-                  <th>Student number</th>
-                  <th>Name</th>
-                  <th>Year</th>
-                  <th>Course</th>
-                  <th>Section</th>
-
+                    <th>Student Number</th>
+                    <th>Name</th>
+                    <th>Year</th>
+                    <th>Course</th>
+                    <th>Section</th>
                 </tr>
-              </thead>
-              <tbody>
-                  <?php
-                    $ret = "SELECT * FROM bcp_sms_log WHERE Status IN ('Incident Approved', 'Incident Pending', 'Incident Ongoing')";
-                    $stmt = $connect->prepare($ret);
-                    $stmt->execute();
-                    $res = $stmt->get_result();
-                    $cnt = 1;
-
-                    while($row = $res->fetch_object()) {
-                  ?>
+            </thead>
+            <tbody>
+                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                     <tr>
-                      <td><?php echo $row->Studentnumber; ?></td>
-                      <td><?php echo $row->nameid; ?></td>
-                      <td><?php echo $row->yearid; ?></td>
-                      <td><?php echo $row->courseid; ?></td>
-                      <td><?php echo $row->sectionid; ?></td>
-                  </tr>
+                        <td><?= $row['student_number'] ?></td>
+                        <td>
+                            <a href="profile.php?id=<?= $row['id'] ?>">
+                                <?= $row['first_name'] . ' ' . $row['last_name'] ?>
+                            </a>
+                        </td>
+                        <td><?= $row['year'] ?></td>
+                        <td><?= $row['course'] ?></td>
+                        <td><?= $row['section'] ?></td>
+                    </tr>
                 <?php } ?>
-              </tbody>
-            </table>
+            </tbody>
+        </table>
           </div>
         </div>
 
@@ -96,9 +96,7 @@
       </div>
     </section>
 
-
   </main>
-
   <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>->
 
   <!-- Vendor JS Files -->
