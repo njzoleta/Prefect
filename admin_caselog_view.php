@@ -66,7 +66,6 @@ $num_rows = mysqli_num_rows($result);
                             <th>Section</th>
                             <th>Severity</th>
                             <th>Penalties</th>
-                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,26 +76,13 @@ $num_rows = mysqli_num_rows($result);
             ?>
             <tr>
                 <td><?php echo $cnt++; ?></td>
-                <td><?php echo htmlspecialchars($row->Studentnumber_Id); ?></td>
+                <td><?php echo htmlspecialchars($row->Studentnumber_id); ?></td>
                 <td><?php echo htmlspecialchars($row->Nameid); ?></td>
                 <td><?php echo htmlspecialchars($row->yearid); ?></td>
                 <td><?php echo htmlspecialchars($row->courseid); ?></td>
                 <td><?php echo htmlspecialchars($row->sectionid); ?></td>
                 <td><?php echo htmlspecialchars($row->severityid); ?></td>
                 <td><?php echo htmlspecialchars($row->penalties); ?></td>
-                <td>
-                    <?php
-                    $status = htmlspecialchars($row->Status);
-                    if ($status == 'Active') {
-                        echo '<span class="badge bg-danger">' . $status . '</span>'; // Red for Active
-                    } elseif ($status == 'Resolved') {
-                        echo '<span class="badge bg-success">' . $status . '</span>'; // Green for Resolved
-                    } elseif ($status == 'Pending') {
-                        echo '<span class="badge bg-warning">' . $status . '</span>'; // Orange for Pending
-                    } else {
-                        echo '<span class="badge bg-secondary">' . $status . '</span>'; // Default for other statuses
-                    }
-                    ?>
                 </td>
             </tr>
             <?php

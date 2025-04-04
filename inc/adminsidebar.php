@@ -68,7 +68,7 @@
     </a>
     <ul id="awww-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
-        <a href="conduct.php">
+        <a href="refferal slip.php">
           <i class="bi bi-circle"></i><span>Referral Slip</span>
         </a>
       </li>

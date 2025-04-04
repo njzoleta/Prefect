@@ -36,6 +36,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if (isset($_POST['AccountId']) && isset($_POST['name']) && isset($_POST['password'])) {
+    $AccountId = $_POST['AccountId'];
+    $name = $_POST['name'];
+    $password = $_POST['password'];
+
+    // Hash the password before updating it
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    $stmt = $connect->prepare("UPDATE bcp_sms3_admin SET name = ?, password = ? WHERE AccountId = ?");
+    $stmt->bind_param("sss", $name, $hashedPassword, $AccountId);
+    if ($stmt->execute()) {
+        $_SESSION['message'] = 'Account updated successfully!';
+    } else {
+        $_SESSION['message'] = 'Error updating account.';
+    }
+    $stmt->close();
+}
+
+
 // Fix the SQL query to ensure it fetches AccountId
 $query = "SELECT AccountId, name, password FROM bcp_sms3_admin";  // Added AccountId column explicitly
 $result = $connect->query($query);
@@ -113,7 +132,7 @@ if (!$result) {
                 <td><?php echo $cnt++; ?></td>
                 <td><?php echo htmlspecialchars($row->AccountId); ?></td>
                 <td><?php echo htmlspecialchars($row->name); ?></td>
-                <td><?php echo htmlspecialchars($row->password); ?></td>
+                <td><?php echo "*****"; ?></td>
 
                 <td>
                     <!-- Edit Button -->

@@ -142,48 +142,63 @@ $collegeSemesterDataJson = json_encode($collegeSemesterData);
 
 
 
-function getseverityidCounts($connect, $category, $period) {
-  $counts = ['minor' => 0, 'major' => 0, 'grave' => 0];
+// Updated function to fetch counts per course and severity
+function getSeverityCountsByCourse($connect, $category, $period) {
+    $counts = [];
 
-  $dateCondition = "";
-  if ($period === 'week') {
-      $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 7 DAY";
-  } elseif ($period === 'month') {
-      $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 1 MONTH";
-  } elseif ($period === 'semester') {
-      $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 6 MONTH";
-  }
+    $dateCondition = "";
+    if ($period === 'week') {
+        $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 7 DAY";
+    } elseif ($period === 'month') {
+        $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 1 MONTH";
+    } elseif ($period === 'semester') {
+        $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 6 MONTH";
+    }
 
-  $sql = "SELECT severityid, COUNT(*) as count FROM bcp_sms_log WHERE category = ? $dateCondition GROUP BY severityid";
-  $stmt = $connect->prepare($sql);
-  $stmt->bind_param("s", $category);
-  $stmt->execute();
-  $result = $stmt->get_result();
+    // Fetch counts for each severity level
+    $sql = "SELECT courseid, severityid, COUNT(*) as count 
+            FROM bcp_sms_log 
+            WHERE category = ? $dateCondition 
+            GROUP BY courseid, severityid";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-  while ($row = $result->fetch_assoc()) {
-      $counts[strtolower($row['severityid'])] = $row['count'];
-  }
+    while ($row = $result->fetch_assoc()) {
+        // Initialize course if not already set
+        if (!isset($counts[$row['courseid']])) {
+            $counts[$row['courseid']] = ['minor' => 0, 'major' => 0, 'grave' => 0];
+        }
+        // Add the count for the severity
+        $counts[$row['courseid']][strtolower($row['severityid'])] = $row['count'];
+    }
 
-  return $counts;
+    return $counts;
 }
 
-// Fetch severityid data for Senior High and College
-$seniorHighWeek = getseverityidCounts($connect, 'Senior High', 'week');
-$seniorHighMonth = getseverityidCounts($connect, 'Senior High', 'month');
-$seniorHighSemester = getseverityidCounts($connect, 'Senior High', 'semester');
+// Fetch data for Senior High and College
+$seniorHighWeekCounts = getSeverityCountsByCourse($connect, 'Senior High', 'week');
+$collegeWeekCounts = getSeverityCountsByCourse($connect, 'College', 'week');
 
-$collegeWeek = getseverityidCounts($connect, 'College', 'week');
-$collegeMonth = getseverityidCounts($connect, 'College', 'month');
-$collegeSemester = getseverityidCounts($connect, 'College', 'semester');
+$seniorHighMonthCounts = getSeverityCountsByCourse($connect, 'Senior High', 'month');
+$collegeMonthCounts = getSeverityCountsByCourse($connect, 'College', 'month');
+
+$seniorHighSemesterCounts = getSeverityCountsByCourse($connect, 'Senior High', 'semester');
+$collegeSemesterCounts = getSeverityCountsByCourse($connect, 'College', 'semester');
 
 // Convert data to JSON for JavaScript
-$seniorHighWeekJson = json_encode(array_values($seniorHighWeek));
-$seniorHighMonthJson = json_encode(array_values($seniorHighMonth));
-$seniorHighSemesterJson = json_encode(array_values($seniorHighSemester));
+$seniorHighWeekJson = json_encode($seniorHighWeekCounts);
+$collegeWeekJson = json_encode($collegeWeekCounts);
 
-$collegeWeekJson = json_encode(array_values($collegeWeek));
-$collegeMonthJson = json_encode(array_values($collegeMonth));
-$collegeSemesterJson = json_encode(array_values($collegeSemester));
+$seniorHighMonthJson = json_encode($seniorHighMonthCounts);
+$collegeMonthJson = json_encode($collegeMonthCounts);
+
+$seniorHighSemesterJson = json_encode($seniorHighSemesterCounts);
+$collegeSemesterJson = json_encode($collegeSemesterCounts);
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -193,7 +208,8 @@ $collegeSemesterJson = json_encode(array_values($collegeSemester));
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Dashboard</title>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -206,263 +222,235 @@ $collegeSemesterJson = json_encode(array_values($collegeSemester));
 
 <?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
 <?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
-
 <main id="main" class="main">
     <div class="pagetitle">
-      <h1 class="dashboard">Dashboard</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-      </nav>
-    </div>    
-
-<section class="section dashboard py-5">
-  <h1 class="fs-1 fw-bold text-center title mb-5 text-primary">Senior High School</h1>
-
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="row">
-
-        <div class="row">
-          <!-- Incidents Card for Week -->
-          <div class="col-xxl-4 col-md-4 mb-4">
-            <div class="card info-card sales-card">
-              <div class="card-body">
-                <h5 class="card-title">Incidents <span>| Week</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class=" d-flex align-items-center justify-content-center">
-                    <i class=""></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><?php echo $seniorHighCounts['week']; ?></h6>
-                    <span class="text-<?php echo $seniorHighChange['week'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
-                      <?php echo $seniorHighPercentageChange['week']; ?>
-                    </span>
-                    <span class="text-muted small pt-2 ps-1">
-                      <?php echo $seniorHighChange['week'] == 'Increase' ? 'increase' : 'decrease'; ?>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Incidents Card for Month -->
-          <div class="col-xxl-4 col-md-4 mb-4">
-            <div class="card info-card sales-card">
-              <div class="card-body">
-                <h5 class="card-title">Incidents <span>| Month</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class=" d-flex align-items-center justify-content-center">
-                    <i class=""></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><?php echo $seniorHighCounts['month']; ?></h6>
-                    <span class="text-<?php echo $seniorHighChange['month'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
-                      <?php echo $seniorHighPercentageChange['month']; ?>
-                    </span>
-                    <span class="text-muted small pt-2 ps-1">
-                      <?php echo $seniorHighChange['month'] == 'Increase' ? 'increase' : 'decrease'; ?>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Incidents Card for Semester -->
-          <div class="col-xxl-4 col-md-4 mb-4">
-            <div class="card info-card sales-card">
-              <div class="card-body">
-                <h5 class="card-title">Incidents <span>| Semester</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class=" d-flex align-items-center justify-content-center">
-                    <i class=""></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><?php echo $seniorHighCounts['semester']; ?></h6>
-                    <span class="text-<?php echo $seniorHighChange['semester'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
-                      <?php echo $seniorHighPercentageChange['semester']; ?>
-                    </span>
-                    <span class="text-muted small pt-2 ps-1">
-                      <?php echo $seniorHighChange['semester'] == 'Increase' ? 'increase' : 'decrease'; ?>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        
-          <!-- Weekly Report Card -->
-          <div class="col-md-12 mb-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Week</h3>
-                <div id="seniorHighWeekChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly Report Card -->
-          <div class="col-md-12 mb-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Month</h3>
-                <div id="seniorHighMonthChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Semester Report Card -->
-          <div class="col-md-12 mb-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Semester</h3>
-                <div id="seniorHighSemesterChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h1>Senior High School severityid Distribution</h1>
-<h2>Week</h2><div id="seniorHighWeekChart"></div>
-<h2>Month</h2><div id="seniorHighMonthChart"></div>
-<h2>Semester</h2><div id="seniorHighSemesterChart"></div>
-
-      </div>
+        <h1 class="dashboard">Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="admin.php">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
     </div>
-  </div>
-</section>
 
-<section class="section dashboard py-5">
-  <h1 class="fs-1 fw-bold text-center text-primary mb-5">College</h1>
+<main>
+<div id="reportContent">
+    <!-- Senior High School Section -->
+    <section class="section dashboard py-5">
+        <h1 class="fs-1 fw-bold text-center text-primary mb-5">Senior High School</h1>
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="row">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <?php
+                        $timePeriods = ['week', 'month', 'semester'];
+                        foreach ($timePeriods as $period) { ?>
+                            <div class="col-xxl-4 col-md-4 mb-4">
+                                <div class="card info-card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Incidents <span>| <?= ucfirst($period) ?></span></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon">
+                                                <i class="bi bi-exclamation-circle text-warning fs-3" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6 class="mb-0"><?= $seniorHighCounts[$period]; ?></h6>
+                                                <span class="text-<?= $seniorHighChange[$period] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                                                    <?= $seniorHighPercentageChange[$period]; ?>
+                                                </span>
+                                                <span class="text-muted small pt-2 ps-1">
+                                                    <?= $seniorHighChange[$period] == 'Increase' ? 'increase' : 'decrease'; ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
 
-        <div class="row">
-          <!-- Incidents Card for Week -->
-          <div class="col-xxl-4 col-md-4 mb-4">
-            <div class="card info-card sales-card">
-              <div class="card-body">
-                <h5 class="card-title">Incidents <span>| Week</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class=" d-flex align-items-center justify-content-center">
-                    <i class=""></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><?php echo $collegeCounts['week']; ?></h6>
-                    <span class="text-<?php echo $collegeChange['week'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
-                      <?php echo $collegePercentageChange['week']; ?>
-                    </span>
-                    <span class="text-muted small pt-2 ps-1">
-                      <?php echo $collegeChange['week'] == 'Increase' ? 'increase' : 'decrease'; ?>
-                    </span>
-                  </div>
+                        <!-- Senior High Line Graphs and Report Cards -->
+                        <?php foreach ($timePeriods as $period) { ?>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-center">Report / <?= ucfirst($period) ?></h3>
+                                        <div id="seniorHigh<?= ucfirst($period) ?>Chart" class="chart-placeholder"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Table for Senior High -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-center">Incident Severity Report / <?= ucfirst($period) ?></h3>
+
+                                        <!-- Table for Senior High -->
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Course</th>
+                                                    <th scope="col">Minor</th>
+                                                    <th scope="col">Major</th>
+                                                    <th scope="col">Grave</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Loop through the Senior High data for the given period
+                                                $seniorHighPeriodData = ${"seniorHigh" . ucfirst($period) . "Counts"}; // Dynamically use the period data
+                                                foreach ($seniorHighPeriodData as $course => $severities) {
+                                                    echo "<tr>";
+                                                    echo "<td>{$course}</td>";
+                                                    echo "<td>{$severities['minor']}</td>";
+                                                    echo "<td>{$severities['major']}</td>";
+                                                    echo "<td>{$severities['grave']}</td>";
+                                                    echo "</tr>";
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-
-          <!-- Incidents Card for Month -->
-          <div class="col-xxl-4 col-md-4 mb-4">
-            <div class="card info-card sales-card">
-              <div class="card-body">
-                <h5 class="card-title">Incidents <span>| Month</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class=" d-flex align-items-center justify-content-center">
-                    <i class=""></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><?php echo $collegeCounts['month']; ?></h6>
-                    <span class="text-<?php echo $collegeChange['month'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
-                      <?php echo $collegePercentageChange['month']; ?>
-                    </span>
-                    <span class="text-muted small pt-2 ps-1">
-                      <?php echo $collegeChange['month'] == 'Increase' ? 'increase' : 'decrease'; ?>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Incidents Card for Semester -->
-          <div class="col-xxl-4 col-md-4 mb-4">
-            <div class="card info-card sales-card">
-              <div class="card-body">
-                <h5 class="card-title">Incidents <span>| Semester</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class="d-flex align-items-center justify-content-center">
-                    <i class=""></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6><?php echo $collegeCounts['semester']; ?></h6>
-                    <span class="text-<?php echo $collegeChange['semester'] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
-                      <?php echo $collegePercentageChange['semester']; ?>
-                    </span>
-                    <span class="text-muted small pt-2 ps-1">
-                      <?php echo $collegeChange['semester'] == 'Increase' ? 'increase' : 'decrease'; ?>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-          <!-- Weekly Report Card -->
-          <div class="col-md-12 mb-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Week</h3>
-                <div id="collegeWeekChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
+    </section>
+</div>
 
-          <!-- Monthly Report Card -->
-          <div class="col-md-12 mb-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Month</h3>
-                <div id="collegeMonthChart" class="chart-placeholder"></div>
-              </div>
-            </div>
-          </div>
+<div id="reportContent">
+    <!-- College Section -->
+    <section class="section dashboard py-5">
+        <h1 class="fs-1 fw-bold text-center text-primary mb-5">College</h1>
 
-          <!-- Semester Report Card -->
-          <div class="col-md-12 mb-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h3 class="card-title text-center">Report / Semester</h3>
-                <div id="collegeSemesterChart" class="chart-placeholder"></div>
-              </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <?php
+                        $timePeriods = ['week', 'month', 'semester'];
+                        foreach ($timePeriods as $period) { ?>
+                            <div class="col-xxl-4 col-md-4 mb-4">
+                                <div class="card info-card shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Incidents <span>| <?= ucfirst($period) ?></span></h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon">
+                                                <i class="bi bi-exclamation-circle text-danger fs-3" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="ps-3">
+                                                <h6 class="mb-0"><?= $collegeCounts[$period]; ?></h6>
+                                                <span class="text-<?= $collegeChange[$period] == 'Increase' ? 'success' : 'danger'; ?> small pt-1 fw-bold">
+                                                    <?= $collegePercentageChange[$period]; ?>
+                                                </span>
+                                                <span class="text-muted small pt-2 ps-1">
+                                                    <?= $collegeChange[$period] == 'Increase' ? 'increase' : 'decrease'; ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                        <!-- College Line Graphs and Report Cards -->
+                        <?php foreach ($timePeriods as $period) { ?>
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-center">Report / <?= ucfirst($period) ?></h3>
+                                        <div id="college<?= ucfirst($period) ?>Chart" class="chart-placeholder"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Table for College -->
+                            <div class="col-md-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-center">Incident Severity Report / <?= ucfirst($period) ?></h3>
+
+                                        <!-- Table for College -->
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Course</th>
+                                                    <th scope="col">Minor</th>
+                                                    <th scope="col">Major</th>
+                                                    <th scope="col">Grave</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Loop through the College data for the given period
+                                                $collegePeriodData = ${"college" . ucfirst($period) . "Counts"}; // Dynamically use the period data
+                                                foreach ($collegePeriodData as $course => $severities) {
+                                                    echo "<tr>";
+                                                    echo "<td>{$course}</td>";
+                                                    echo "<td>{$severities['minor']}</td>";
+                                                    echo "<td>{$severities['major']}</td>";
+                                                    echo "<td>{$severities['grave']}</td>";
+                                                    echo "</tr>";
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+    </section>
+</div>
 
+                <button onclick="downloadPDF()">Download Report</button>             
+               </div>
+                
+        </div>
+    </section>
+</main>
 
-        <h1>College severityid Distribution</h1>
-<h2>Week</h2><div id="collegeWeekChart"></div>
-<h2>Month</h2><div id="collegeMonthChart"></div>
-<h2>Semester</h2><div id="collegeSemesterChart"></div>
-
- 
-      </div>
-    </div>
-  </div>
-</section>
-  </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
   <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
   <!-- End Footer -->  
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+   function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+
+    // Capture the content from the 'reportContent' div
+    html2canvas(document.getElementById('reportContent'), {
+        useCORS: true, // Ensure that CORS is enabled for external resources like images
+        allowTaint: true, // Allow tainted content
+    }).then(function (canvas) {
+        const doc = new jsPDF();
+
+        // Convert canvas to image data
+        const imgData = canvas.toDataURL('image/png');
+
+        // Add image to the PDF. You can adjust the size and position as needed
+        doc.addImage(imgData, 'PNG', 10, 10, 150, 200); // (img, format, x, y, width, height)
+
+        // Save the PDF with the desired filename
+        doc.save('report.pdf');
+    }).catch(function (error) {
+        console.log("Error capturing content:", error);
+    });
+}
+
+</script>
 
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
@@ -477,102 +465,111 @@ $collegeSemesterJson = json_encode(array_values($collegeSemester));
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-      const seniorHighWeekData = <?php echo $seniorHighWeekDataJson; ?>;
-      const collegeWeekData = <?php echo $collegeWeekDataJson; ?>;
-
-      const seniorHighMonthData = <?php echo $seniorHighMonthDataJson; ?>;
-      const collegeMonthData = <?php echo $collegeMonthDataJson; ?>;
-
-      const seniorHighSemesterData = <?php echo $seniorHighSemesterDataJson; ?>;
-      const collegeSemesterData = <?php echo $collegeSemesterDataJson; ?>;
-
-      // Define color mapping for courses
-      const colorMapping = {
-          'STEM': '#FF5733',
-          'ICT': '#33FF57',
-          'HE': '#3357FF',
-          'GAS': '#F1C40F',
-          'ABM': '#8E44AD',
-          'BSIT': '#7D3C98',
-          'BSTM': '#2980B9',
-          'BSOA': '#D35400',
-          'BSCRIM': '#C0392B',
-          'BSEDUC': '#27AE60',
-          'BSHM': '#F39C12',
-          'BSENTREP': '#8E44AD',
-          'BSBA': '#2C3E50',
-          'BSCpE': '#E67E22',
-          'BEEd': '#3498DB',
-          'BSP': '#9B59B6'
-      };
-
-      const createChart = (elementId, data) => {
-          const categories = data.map(item => item.courseid);
-          const seriesData = data.map(item => parseInt(item.count));
-          const colors = categories.map(course => colorMapping[course] || '#000000'); // Default to black if course not found
-
-          new ApexCharts(document.querySelector(`#${elementId}`), {
-              series: [{
-                  name: 'Inc idents',
-                  data: seriesData
-              }],
-              chart: {
-                  type: 'bar',
-                  height: 200
-              },
-              xaxis: {
-                  categories: categories
-              },
-              colors: colors // Set the colors for the series
-          }).render();
-      };
-
-      createChart('seniorHighWeekChart', seniorHighWeekData);
-      createChart('collegeWeekChart', collegeWeekData);
-
-      createChart('seniorHighMonthChart', seniorHighMonthData);
-      createChart('collegeMonthChart', collegeMonthData);
-
-      createChart('seniorHighSemesterChart', seniorHighSemesterData);
-      createChart('collegeSemesterChart', collegeSemesterData);
-  });
-
-
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     // Data from PHP
     const seniorHighWeekData = <?php echo $seniorHighWeekJson; ?>;
-    const seniorHighMonthData = <?php echo $seniorHighMonthJson; ?>;
-    const seniorHighSemesterData = <?php echo $seniorHighSemesterJson; ?>;
-
     const collegeWeekData = <?php echo $collegeWeekJson; ?>;
+
+    const seniorHighMonthData = <?php echo $seniorHighMonthJson; ?>;
     const collegeMonthData = <?php echo $collegeMonthJson; ?>;
+
+    const seniorHighSemesterData = <?php echo $seniorHighSemesterJson; ?>;
     const collegeSemesterData = <?php echo $collegeSemesterJson; ?>;
 
-    const categories = ["Minor", "Major", "Grave"];
+    // Function to create a line chart
+    function createLineChart(elementId, data, title) {
+        const categories = Object.keys(data); // Get all the courses (keys)
+        const minorData = categories.map(course => data[course].minor || 0);
+        const majorData = categories.map(course => data[course].major || 0);
+        const graveData = categories.map(course => data[course].grave || 0);
 
-    // Function to create a pie chart
-    function createPieChart(elementId, data) {
         new ApexCharts(document.querySelector(`#${elementId}`), {
-            series: data,
+            series: [
+                {
+                    name: 'Minor',
+                    data: minorData,
+                },
+                {
+                    name: 'Major',
+                    data: majorData,
+                },
+                {
+                    name: 'Grave',
+                    data: graveData,
+                },
+            ],
             chart: {
-                type: 'pie',
-                height: 350
+                type: 'line',
+                height: 350,
             },
-            labels: categories,
-            colors: ["#2E86C1", "#F39C12", "#C0392B"]
+            title: {
+                text: title,
+                align: 'center',
+                margin: 10,
+                style: {
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                },
+            },
+            xaxis: {
+                categories: categories,  // Display course names on the X-axis
+                title: {
+                    text: 'Courses', // Title for the X-axis
+                },
+                labels: {
+                    rotate: -45, // Rotate labels to fit long course names
+                    style: {
+                        colors: '#000',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                    },
+                },
+            },
+            yaxis: {
+                title: {
+                    text: 'Number of Incidents', // Title for the Y-axis
+                },
+            },
+            colors: ['#2E86C1', '#F39C12', '#C0392B'], // Minor, Major, Grave colors
+            stroke: {
+                width: 2,
+                curve: 'smooth',
+            },
+            markers: {
+                size: 5,
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: (val) => val,  // Display the actual count value on hover
+                },
+            },
         }).render();
     }
 
-    // Create charts for Senior High
-    createPieChart("seniorHighWeekChart", seniorHighWeekData);
-    createPieChart("seniorHighMonthChart", seniorHighMonthData);
-    createPieChart("seniorHighSemesterChart", seniorHighSemesterData);
+    // Create line charts for Senior High
+    createLineChart("seniorHighWeekChart", seniorHighWeekData, "Senior High - Week");
+    createLineChart("seniorHighMonthChart", seniorHighMonthData, "Senior High - Month");
+    createLineChart("seniorHighSemesterChart", seniorHighSemesterData, "Senior High - Semester");
 
-    // Create charts for College
-    createPieChart("collegeWeekChart", collegeWeekData);
-    createPieChart("collegeMonthChart", collegeMonthData);
-    createPieChart("collegeSemesterChart", collegeSemesterData);
+    // Create line charts for College
+    createLineChart("collegeWeekChart", collegeWeekData, "College - Week");
+    createLineChart("collegeMonthChart", collegeMonthData, "College - Month");
+    createLineChart("collegeSemesterChart", collegeSemesterData, "College - Semester");
+});
+
+
+// Download full dashboard as PDF
+document.getElementById("downloadPDF").addEventListener("click", function () {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    html2canvas(document.body).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+        pdf.save("dashboard_report.pdf");
+    });
 });
   </script>
 </body>

@@ -4,7 +4,6 @@ include('connect.php');
 include('checklog.php');
 check_login();
 
-
 $AccountId = $name = $password = '';
 $errors = [];
 
@@ -52,7 +51,7 @@ $result = mysqli_query($connect, $query);
 
 <!-- ======= Sidebar ======= -->  
 <?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
-<!-- End Sidebar-->
+<!-- End Sidebar -->
 
 <main id="main" class="main">
     <div class="pagetitle">
@@ -67,23 +66,23 @@ $result = mysqli_query($connect, $query);
     </div>    
 
     <div class="card-body">
-    <form method="POST" id="form"> 
-    <input type="hidden" name="action" value="create">
-    <div class="form-group">
-        <label for="AccountId">AccountId</label>
-        <input type="text" required class="form-control" id="AccountId" name="AccountId" value="<?php echo htmlspecialchars($AccountId); ?>">
-    </div>
-    <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>">
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" value="<?php echo htmlspecialchars($password); ?>">
-    </div>
+        <form method="POST" id="form"> 
+            <input type="hidden" name="action" value="create">
+            <div class="form-group">
+                <label for="AccountId">AccountId</label>
+                <input type="text" required class="form-control" id="AccountId" name="AccountId" value="<?php echo htmlspecialchars($AccountId); ?>">
+            </div>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" value="<?php echo htmlspecialchars($password); ?>">
+            </div>
 
-    <button type="submit" class="btn btn-success">Add Admin</button>
-</form>
+            <button type="button" class="btn btn-success" onclick="showConfirmationDialog()">Add Admin</button>
+        </form>
     </div>
 </main>
 
@@ -99,6 +98,38 @@ $result = mysqli_query($connect, $query);
 <script src="assets/vendor/tinymce/tinymce.min.js"></script>
 <script src="assets/vendor/php-email-form/validate.js"></script>
 <script src="assets/js/main.js"></script>
+
+<!-- Custom Modal for Confirmation -->
+<div id="confirmationModal" class="modal fade" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Admin Creation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to add this admin account?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show the custom confirmation dialog
+    function showConfirmationDialog() {
+        var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        confirmationModal.show();
+    }
+
+    // Submit the form if user confirms
+    function submitForm() {
+        document.getElementById('form').submit();
+    }
+</script>
 
 </body>
 </html>

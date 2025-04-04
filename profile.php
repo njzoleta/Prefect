@@ -1,5 +1,9 @@
 <?php
+session_start();
+include('connect.php');
 require_once 'connect.php'; // This imports $conn
+include('checklog.php');
+check_login();
 
 if (!isset($conn)) {
     die("Database connection failed."); // Ensure connection is established
@@ -64,6 +68,9 @@ if (isset($_GET['id'])) {
             <div class="card-body">
                 <h5>Profile Details</h5>
                 <ul class="list-group">
+                <li class="list-group-item"><strong>Course:</strong> <?= $student['course'] ?></li>
+                    <li class="list-group-item"><strong>Year/Grade:</strong> <?= $student['year'] ?></li>
+                    <li class="list-group-item"><strong>Section:</strong> <?= $student['section'] ?></li>
                     <li class="list-group-item"><strong>Age:</strong> <?= $student['age'] ?></li>
                     <li class="list-group-item"><strong>Gender:</strong> <?= $student['gender'] ?></li>
                     <li class="list-group-item"><strong>Birthdate:</strong> <?= $student['birthdate'] ?></li>
@@ -87,5 +94,7 @@ if (isset($_GET['id'])) {
             </div>
         </div>
     </div>
+    <script src="assets/js/main.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -27,20 +27,14 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Student Info</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
-
-
-
+  <link href="./assets/css/admin.css" rel="stylesheet">
 </head>
-<body>
-
-
 <?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
-
-
 <?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
 
 <main id="main" class="main">

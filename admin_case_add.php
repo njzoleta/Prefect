@@ -137,199 +137,119 @@ $result = mysqli_query($connect, $query);
         </div>
 
         <div class="card-body">
-        <form method="POST" id="form">
-    <input type="hidden" name="action" value="create">
+    <form method="POST" id="form">
+        <input type="hidden" name="action" value="create">
 
-    <div class="form-group">
+        <!-- Reporter Details -->
+        <label for="Category_report">Category</label>
+        <select id="Category_report" name="Category_report" class="form-control">
+            <option value="Senior High">Senior High</option>
+            <option value="College">College</option>
+        </select>
+
         <label for="Name_report">Reporter Name</label>
-        <input class="text1 form-control" id="Name_report" name="Name_report" value="<?php echo htmlspecialchars($Name_report); ?>">
-    </div>
+        <input type="text" id="Name_report" name="Name_report" class="form-control" required>
 
-    <div class="form-group">
-        <label for="Section_report">Section</label>
-        <input class="text2 form-control" id="Section_report" name="Section_report" value="<?php echo htmlspecialchars($Section_report); ?>">
-    </div>
+        <label for="Year_report">Year</label>
+        <input type="text" id="Year_report" name="Year_report" class="form-control" readonly>
 
-    <div class="form-group">
         <label for="Course_report">Course</label>
-        <select class="text3 form-select" id="Course_report" name="Course_report" value="<?php echo htmlspecialchars($Course_report); ?>">
-                     <option value="ICT">ICT</option>
-                    <option value="STEM">STEM</option>
-                    <option value="GAS">GAS</option>
-                    <option value="HE">HE</option>
-                    <option value="ABMS">ABMS</option>
-                    <option value="BSIT">BSIT</option>
-                    <option value="BSTM" >BSTM</option>
-                    <option value="BSEDUC">BSEDUC</option>
-                            <option value="BSCRIM" >BSCRIM</option>
-                            <option value="BSHM">BSHM</option>
-                            <option value="BSENTREP">BSENTREP</option>
-                            <option value="BSOA">BSOA</option>
-                            <option value="BSBA">BSBA</option>
-                            <option value="BSP">BSP</option>
-                            <option value="BEEd,BPEd& BTLed">BEEd, BPEd & BTLed</option>
-                            <option value="BSCpE" >BSCpE</option>
+        <input type="text" id="Course_report" name="Course_report" class="form-control" readonly>
 
+        <label for="Section_report">Section</label>
+        <input type="text" id="Section_report" name="Section_report" class="form-control" readonly>
+
+        <label for="Adviser_report">Adviser</label>
+        <input type="text" id="Adviser_report" name="Adviser_report" class="form-control" readonly>
+
+        <!-- Report Details -->
+        <div class="form-group">
+            <label for="today">Report Date & Time</label>
+            <input type="datetime-local" class="form-control" id="today" name="today" required>
+        </div>
+
+        <div class="form-group">
+            <label for="Statement">Statement</label>
+            <textarea required class="form-control" id="Statement" name="Statement" rows="4"></textarea>
+        </div>
+
+        <!-- Accuser Details -->
+        <label for="Category_accuser">Category</label>
+        <select id="Category_accuser" name="Category_accuser" class="form-control">
+            <option value="Senior High">Senior High</option>
+            <option value="College">College</option>
         </select>
-    </div>
 
-    <div class="form-group">
-        <label for="Year_report" class="text41">Grade/Year</label>
-        <select class="text4 form-select" id="Year_report" name="Year_report" value="<?php echo htmlspecialchars($Year_report); ?>">
-                    <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
-                    <option value="1styear" >1st Year</option>
-                    <option value="2ndyear">2nd Year</option>
-                    <option value="3rdyear">3rd Year</option>
-                    <option value="4rtyear" >4th Year</option>
-    </select>
-    </div>
+        <label for="Name_accuser">Accuser Name</label>
+        <input type="text" id="Name_accuser" name="Name_accuser" class="form-control" required>
 
-    <div class="form-group">
-        <label for="Adviser_report" class="text51">Adviser</label>
-        <input class="text5 form-control" id="Adviser_report" name="Adviser_report" value="<?php echo htmlspecialchars($Adviser_report); ?>">
-    </div>
+        <label for="Year_accuser">Year</label>
+        <input type="text" id="Year_accuser" name="Year_accuser" class="form-control" readonly>
 
-    <div class="form-group">
-        <label for="today" class="report1">Report</label>
-        <input type="datetime-local" class="report form-control" id="today" name="today">
-    </div>
+        <label for="Course_accuser">Course</label>
+        <input type="text" id="Course_accuser" name="Course_accuser" class="form-control" readonly>
 
-    
+        <label for="Section_accuser">Section</label>
+        <input type="text" id="Section_accuser" name="Section_accuser" class="form-control" readonly>
 
-    <div class="form-group">
-        <label for="Statement" class="text61">Statement</label>
-        <textarea required class="text6 form-control" id="Statement" name="Statement" rows="4"><?php echo htmlspecialchars($Statement); ?></textarea>
-    </div>
+        <label for="Adviser_accuser">Adviser</label>
+        <input type="text" id="Adviser_accuser" name="Adviser_accuser" class="form-control" readonly>
 
-    <div class="form-group">
-        <label for="Name_accuser" class="text71">Accuser Name</label>
-        <input class="text7 form-control" id="Name_accuser" name="Name_accuser" value="<?php echo htmlspecialchars($Name_accuser); ?>">
-    </div>
+        <!-- Incident Details -->
+        <div class="form-group">
+            <label for="Type_incident">Type of Incident</label>
+            <select name="Type_incident" class="form-control" id="Type_incident">
+                <option value="Theft">Theft</option>
+                <option value="Assault">Assault</option>
+                <option value="Fraud">Fraud</option>
+            </select>
+        </div>
 
-    <div class="form-group">
-        <label for="Section_accuser" class="text81">Section</label>
-        <input class="text8 form-control" id="Section_accuser" name="Section_accuser" value="<?php echo htmlspecialchars($Section_accuser); ?>">
-    </div>
+        <div class="form-group">
+            <label for="Type_Evidence">Type of Evidence</label>
+            <select class="form-control" id="Type_Evidence" name="Type_Evidence" onchange="toggleEvidenceFields()">
+                <option value="">Select Evidence Type</option>
+                <option value="Witness">Witness</option>
+                <option value="CCTV Footage">CCTV Footage</option>
+                <option value="Image">Image</option>
+            </select>
+        </div>
 
-    <div class="form-group">
-        <label for="Course_accuser" class="text91">Course</label>
-        <select class="text9 form-select" id="Course_accuser" name="Course_accuser" value="<?php echo htmlspecialchars($Course_accuser); ?>">
-        <option value="ICT">ICT</option>
-                    <option value="STEM">STEM</option>
-                    <option value="GAS">GAS</option>
-                    <option value="HE">HE</option>
-                    <option value="ABMS">ABMS</option>
-                    <option value="BSIT">BSIT</option>
-                    <option value="BSTM" >BSTM</option>
-                    <option value="BSEDUC">BSEDUC</option>
-                            <option value="BSCRIM" >BSCRIM</option>
-                            <option value="BSHM">BSHM</option>
-                            <option value="BSENTREP">BSENTREP</option>
-                            <option value="BSOA">BSOA</option>
-                            <option value="BSBA">BSBA</option>
-                            <option value="BSP">BSP</option>
-                            <option value="BEEd,BPEd& BTLed">BEEd, BPEd & BTLed</option>
-                            <option value="BSCpE" >BSCpE</option>
-    </select>
-    </div>
+        <!-- Witness Name Input -->
+        <div class="form-group" id="witnessField" style="display: none;">
+            <label for="Witness_Name">Witness Name</label>
+            <input type="text" class="form-control" id="Witness_Name" name="Witness_Name">
+        </div>
 
-    <div class="form-group">
-        <label for="Year_accuser" class="text12">Year/Grade</label>
-        <select class="text11 form-select" id="Year_accuser" name="Year_accuser" value="<?php echo htmlspecialchars($Year_accuser); ?>">
-        <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
-                    <option value="1styear" >1st Year</option>
-                    <option value="2ndyear">2nd Year</option>
-                    <option value="3rdyear">3rd Year</option>
-                    <option value="4rtyear" >4th Year</option>
-        </select>
-    </div>
+        <!-- Evidence Upload Input -->
+        <div class="form-group" id="evidenceFileField" style="display: none;">
+            <label for="Evidence_File">Upload Evidence (Image/Video)</label>
+            <input type="file" class="form-control" id="Evidence_File" name="Evidence_File" accept="image/*,video/*">
+        </div>
 
-    <div class="form-group">
-        <label for="Adviser_accuser" class="text23">Adviser Name</label>
-        <input class="text22 form-control" id="Adviser_accuser" name="Adviser_accuser" value="<?php echo htmlspecialchars($Adviser_accuser); ?>">
-    </div>
+        <div class="form-group">
+            <label for="Incident_place">Incident Place</label>
+            <input type="text" class="form-control" id="Incident_place" name="Incident_place" required>
+        </div>
 
-    <div class="form-group">
-        <label for="Type_incident">Type of Incident</label>
-        <select name="Type_incident" class="form-control" id="Type_incident">
-            <option value="Theft">Theft</option>
-            <option value="Assault">Assault</option>
-            <option value="Fraud">Fraud</option>
-        </select>
-    </div>
+        <div class="form-group">
+            <label for="Time_incident">Time of Incident</label>
+            <input type="datetime-local" class="form-control" id="Time_incident" name="Time_incident" required>
+        </div>
 
-
-
-    <div class="form-group">
-    <label for="Type_Evidence">Type of Evidence</label>
-    <select class="form-control" id="Type_Evidence" name="Type_Evidence" onchange="toggleEvidenceFields()">
-        <option value="">Select Evidence Type</option>
-        <option value="Witness">Witness</option>
-        <option value="CCTV Footage">CCTV Footage</option>
-        <option value="Image">Image</option>
-    </select>
+        <!-- Submit Button -->
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal">
+            Add Report Cases
+        </button>
+    </form>
 </div>
 
-<!-- Input for Witness Name -->
-<div class="form-group" id="witnessField" style="display: none;">
-    <label for="Witness_Name">Witness Name</label>
-    <input type="text" class="form-control" id="Witness_Name" name="Witness_Name">
-</div>
-
-<!-- File Upload for CCTV Footage or Image -->
-<div class="form-group" id="evidenceFileField" style="display: none;">
-    <label for="Evidence_File">Upload Evidence (Image/Video)</label>
-    <input type="file" class="form-control" id="Evidence_File" name="Evidence_File" accept="image/*,video/*">
-</div>
-
-<script>
-    function toggleEvidenceFields() {
-        let type = document.getElementById("Type_Evidence").value;
-        document.getElementById("witnessField").style.display = (type === "Witness") ? "block" : "none";
-        document.getElementById("evidenceFileField").style.display = (type === "CCTV Footage" || type === "Image") ? "block" : "none";
-    }
-</script>
-
-    <div class="form-group">
-        <label for="Incident_place">Incident Place</label>
-        <input class="text form-control" id="Incident_place" name="Incident_place" value="<?php echo htmlspecialchars($Incident_place); ?>">
-    </div>
-
-    <div class="form-group">
-        <label for="Time_incident">Time of Incident</label>
-        <input type="datetime-local" class="form-control" id="Time_incident" name="Time_incident">
-    </div>
-
-    <script>
-    function confirmSubmission(event) {
-        event.preventDefault(); // Prevent form submission
-        let confirmation = confirm("Are you sure you want to submit this case report?");
-        if (confirmation) {
-            document.getElementById("form").submit(); // Submit the form if confirmed
-        }
-    }
-</script>
-
-<form method="POST" id="form" onsubmit="confirmSubmission(event)">
-    <input type="hidden" name="action" value="create">
-
-    <!-- Form Fields Here -->
-
-    <button type="button" class="btn btn-success" onclick="showConfirmation()">Add Report Cases</button>
-
-</form>
-
-
-    </main>
-
-    <!-- Confirmation Modal -->
+<!-- Confirmation Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirm Submission</h5>
+                <h5 class="modal-title">Confirm Submission</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -342,6 +262,20 @@ $result = mysqli_query($connect, $query);
         </div>
     </div>
 </div>
+
+<!-- JavaScript -->
+<script>
+    function toggleEvidenceFields() {
+        let type = document.getElementById("Type_Evidence").value;
+        document.getElementById("witnessField").style.display = (type === "Witness") ? "block" : "none";
+        document.getElementById("evidenceFileField").style.display = (type === "CCTV Footage" || type === "Image") ? "block" : "none";
+    }
+
+    document.getElementById("confirmSubmit").addEventListener("click", function () {
+        document.getElementById("form").submit();
+    });
+</script>
+
 
 
     <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
@@ -356,19 +290,50 @@ $result = mysqli_query($connect, $query);
         document.getElementById('form').submit();
     });
 
-    
-
-function fetchStudentInfo(fieldId, yearId, courseId, sectionId) {
+    function fetchStudentInfo(fieldId, yearId, courseId, sectionId, adviserId, categoryId) {
     let studentName = document.getElementById(fieldId).value;
+    let category = document.getElementById(categoryId).value; // Get category
 
     if (studentName.trim() !== "") {
-        fetch(`get_student_info.php?name=${studentName}`)
+        fetch(`fetch_student.php?query=${encodeURIComponent(studentName)}&category=${encodeURIComponent(category)}`)
         .then(response => response.json())
         .then(data => {
-            if (!data.error) {
-                document.getElementById(yearId).value = data.year;
-                document.getElementById(courseId).value = data.course;
-                document.getElementById(sectionId).value = data.section;
+            if (Array.isArray(data) && data.length > 0) {
+                if (data.length === 1) {
+                    // Auto-fill kapag isang student lang ang nahanap
+                    document.getElementById(yearId).value = data[0].year;
+                    document.getElementById(courseId).value = data[0].course;
+                    document.getElementById(sectionId).value = data[0].section;
+                    document.getElementById(adviserId).value = data[0].adviser || ''; // Set adviser
+                } else {
+                    // If maraming results, ipakita bilang dropdown
+                    let options = data.map(student => 
+                        `<option value="${student.first_name} ${student.last_name}" 
+                                 data-year="${student.year}" 
+                                 data-course="${student.course}" 
+                                 data-section="${student.section}" 
+                                 data-adviser="${student.adviser || ''}">
+                            ${student.first_name} ${student.last_name} (${student.course}, ${student.year})
+                        </option>`
+                    ).join('');
+
+                    let selectHTML = `<select id="studentSelect" class="form-control">
+                        <option value="">Select Student</option>${options}</select>`;
+
+                    let studentSelect = document.createElement("div");
+                    studentSelect.innerHTML = selectHTML;
+                    document.body.appendChild(studentSelect);
+
+                    document.getElementById("studentSelect").addEventListener("change", function() {
+                        let selectedOption = this.options[this.selectedIndex];
+                        document.getElementById(fieldId).value = selectedOption.value;
+                        document.getElementById(yearId).value = selectedOption.getAttribute("data-year");
+                        document.getElementById(courseId).value = selectedOption.getAttribute("data-course");
+                        document.getElementById(sectionId).value = selectedOption.getAttribute("data-section");
+                        document.getElementById(adviserId).value = selectedOption.getAttribute("data-adviser");
+                        studentSelect.remove(); // Remove dropdown after selection
+                    });
+                }
             } else {
                 alert("Student not found!");
             }
@@ -377,21 +342,18 @@ function fetchStudentInfo(fieldId, yearId, courseId, sectionId) {
     }
 }
 
-// Event Listeners para awtomatikong mag-load ng data
+// Auto-fill for Reporter
 document.getElementById("Name_report").addEventListener("blur", function() {
-    fetchStudentInfo("Name_report", "Student_number_report", "Year_report", "Course_report", "Section_report");
+    fetchStudentInfo("Name_report", "Year_report", "Course_report", "Section_report", "Adviser_report", "Category_report");
 });
 
+// Auto-fill for Accuser
 document.getElementById("Name_accuser").addEventListener("blur", function() {
-    fetchStudentInfo("Name_accuser", "Student_number_accuser", "Year_accuser", "Course_accuser", "Section_accuser");
+    fetchStudentInfo("Name_accuser", "Year_accuser", "Course_accuser", "Section_accuser", "Adviser_accuser", "Category_accuser");
 });
-</script>
-
-    
 
 
 </script>
-
 
 
        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
