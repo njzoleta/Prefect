@@ -128,13 +128,6 @@
           <i class="bi bi-circle"></i><span>Add</span>
         </a>
       </li>
-
-      <li>
-        <a href="adminlog_view.php">
-          <i class="bi bi-circle"></i><span>View</span>
-        </a>
-      </li>
-
       <li>
         <a href="adminlog_manage.php">
           <i class="bi bi-circle"></i><span>Manage</span>

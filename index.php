@@ -8,21 +8,21 @@ include('connect.php');
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!empty($_POST['AccountId']) && !empty($_POST['password'])) { 
-        $AccountId = $connect->real_escape_string($_POST['AccountId']);
+    if (!empty($_POST['Username']) && !empty($_POST['password'])) { 
+        $Username = $connect->real_escape_string($_POST['Username']);
         $password = $_POST['password']; 
 
-        $stmt = $connect->prepare("SELECT AccountId, password FROM bcp_sms3_admin WHERE AccountId = ?");
+        $stmt = $connect->prepare("SELECT Username, password FROM bcp_sms3_admin WHERE Username = ?");
         if (!$stmt) {
             die("Prepare failed: " . $connect->error);
         }
 
-        $stmt->bind_param('s', $AccountId);
+        $stmt->bind_param('s', $Username);
         $stmt->execute();
-        $stmt->bind_result($dbAccountId, $dbpassword);
+        $stmt->bind_result($dbUsername, $dbpassword);
 
         if ($stmt->fetch() && $password === $dbpassword) { // Use password_verify() if stored as hashed
-            $_SESSION['AccountId'] = $dbAccountId;
+            $_SESSION['Username'] = $dbUsername;
             $_SESSION['admin'] = '1'; 
             session_regenerate_id(true);
             $stmt->close();
@@ -70,8 +70,8 @@ $connect->close();
         <?php endif; ?>
 
         <form id="loginForm" method="post">
-            <label for="AccountId">Account ID</label>
-            <input type="number" id="AccountId" name="AccountId" required aria-label="AccountId">
+            <label for="Username">Username</label>
+            <input type="text" id="Username" name="Username" required aria-label="Username">
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required aria-label="password">

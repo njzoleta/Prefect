@@ -155,25 +155,24 @@ function getSeverityCountsByCourse($connect, $category, $period) {
         $dateCondition = "AND incident_date >= CURDATE() - INTERVAL 6 MONTH";
     }
 
-    // Fetch counts for each severity level
-    $sql = "SELECT courseid, severityid, COUNT(*) as count 
+$sql = "SELECT bcp_sms_log.courseid, bcp_sms_log.severityid, bcp_sms_log.Nameid, COUNT(*) as count 
             FROM bcp_sms_log 
             WHERE category = ? $dateCondition 
-            GROUP BY courseid, severityid";
+            GROUP BY courseid, severityid, Nameid";
     $stmt = $connect->prepare($sql);
     $stmt->bind_param("s", $category);
     $stmt->execute();
     $result = $stmt->get_result();
-
     while ($row = $result->fetch_assoc()) {
         // Initialize course if not already set
         if (!isset($counts[$row['courseid']])) {
-            $counts[$row['courseid']] = ['minor' => 0, 'major' => 0, 'grave' => 0];
+            $counts[$row['courseid']] = ['minor' => 0, 'major' => 0, 'grave' => 0, 'names' => []];
         }
         // Add the count for the severity
         $counts[$row['courseid']][strtolower($row['severityid'])] = $row['count'];
+        // Add the Nameid to the names array
+        $counts[$row['courseid']]['names'][] = $row['Nameid'];
     }
-
     return $counts;
 }
 
@@ -220,8 +219,8 @@ $collegeSemesterJson = json_encode($collegeSemesterCounts);
 </head>
 <body>
 
-<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
-<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<?php include('../Prefect/inc/header.php'); ?>
+<?php include('../Prefect/inc/adminsidebar.php'); ?>
 <main id="main" class="main">
     <div class="pagetitle">
         <h1 class="dashboard">Dashboard</h1>
@@ -286,31 +285,40 @@ $collegeSemesterJson = json_encode($collegeSemesterCounts);
                                     <div class="card-body">
                                         <h3 class="card-title text-center">Incident Severity Report / <?= ucfirst($period) ?></h3>
 
-                                        <!-- Table for Senior High -->
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Course</th>
-                                                    <th scope="col">Minor</th>
-                                                    <th scope="col">Major</th>
-                                                    <th scope="col">Grave</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                // Loop through the Senior High data for the given period
-                                                $seniorHighPeriodData = ${"seniorHigh" . ucfirst($period) . "Counts"}; // Dynamically use the period data
-                                                foreach ($seniorHighPeriodData as $course => $severities) {
-                                                    echo "<tr>";
-                                                    echo "<td>{$course}</td>";
-                                                    echo "<td>{$severities['minor']}</td>";
-                                                    echo "<td>{$severities['major']}</td>";
-                                                    echo "<td>{$severities['grave']}</td>";
-                                                    echo "</tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
+                                   
+<!-- Table for Senior High -->
+
+// Table for Senior High
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Course</th>
+            <th scope="col">Minor</th>
+            <th scope="col">Major</th>
+            <th scope="col">Grave</th>
+            <th scope="col">Student Names</th> 
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+$seniorHighPeriodData = ${"seniorHigh" . ucfirst($period) . "Counts"}; // Dynamically use the period data
+foreach ($seniorHighPeriodData as $course => $severities) {
+    echo "<tr>";
+    echo "<td>{$course}</td>";
+    echo "<td>{$severities['minor']}</td>";
+    echo "<td>{$severities['major']}</td>";
+    echo "<td>{$severities['grave']}</td>";
+    // Directly display names in the table cell
+    $Nameid = implode(", ", $severities['names']); // Ensure you are using the correct key
+    echo "<td>{$Nameid}</td>"; 
+    echo "</tr>";
+}
+        ?>
+    </tbody>
+</table>
+
+
+
                                     </div>
                                 </div>
                             </div>
@@ -421,7 +429,7 @@ $collegeSemesterJson = json_encode($collegeSemesterCounts);
 
 
   <!-- ======= Footer ======= -->
-  <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+  <?php include('../Prefect/inc/footer.php'); ?>
   <!-- End Footer -->  
 
 
@@ -465,6 +473,15 @@ $collegeSemesterJson = json_encode($collegeSemesterCounts);
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
 
   <script>
+document.querySelectorAll("td[names]").forEach(function (cell) {
+    cell.addEventListener("mouseover", function () {
+
+        console.log("Student Name: " + cell.getAttribute("Nameid"));
+    });
+});
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
     // Data from PHP
     const seniorHighWeekData = <?php echo $seniorHighWeekJson; ?>;

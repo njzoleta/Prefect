@@ -117,11 +117,11 @@ $result = mysqli_query($connect, $query);
 <body>
 
     <!-- ======= Header ======= -->
-    <?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
+    <?php include('header.php'); ?>
     <!-- End Header -->
 
     <!-- ======= Sidebar ======= -->
-    <?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+    <?php include('adminsidebar.php'); ?>
     <!-- End Sidebar-->
 
     <main id="main" class="main">
@@ -278,7 +278,7 @@ $result = mysqli_query($connect, $query);
 
 
 
-    <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+    <?php include('footer.php'); ?>
 
     <script>
     function showConfirmation() {

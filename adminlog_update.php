@@ -3,19 +3,19 @@ include('connect.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['AccountId'])) {
     $AccountId = $_POST['AccountId'];
-    $name = $_POST['name'];
+    $Username = $_POST['Username'];
     $password = $_POST['password'];
 
     // Debugging line to check data
-    error_log("Updating AccountId: $AccountId, Name: $name, Password: $password");
+    error_log("Updating AccountId: $AccountId, Username: $Username, Password: $password");
 
     // SQL query to update admin data
-    $updateQuery = "UPDATE bcp_sms3_admin SET name = ?, password = ? WHERE AccountId = ?";
+    $updateQuery = "UPDATE bcp_sms3_admin SET Username = ?, password = ? WHERE AccountId = ?";
 
     // Prepare the statement
     if ($stmt = $connect->prepare($updateQuery)) {
         // Bind parameters
-        $stmt->bind_param("ssi", $name, $password, $AccountId);
+        $stmt->bind_param("ssi", $Username, $password, $AccountId);
 
         // Execute the statement
         if ($stmt->execute()) {

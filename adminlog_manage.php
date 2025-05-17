@@ -20,13 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Handle edit request
-    if (isset($_POST['AccountId']) && isset($_POST['name'])) {
-        $AccountId = $_POST['AccountId'];
-        $name = $_POST['name'];
+    if (isset($_POST['AccountId']) && isset($_POST['Username'])) {
+        $Username = $_POST['Username'];
         $password = $_POST['password'];
 
-        $stmt = $connect->prepare("UPDATE bcp_sms3_admin SET name = ?, password = ? WHERE AccountId = ?");
-        $stmt->bind_param("sss", $name, $password, $AccountId);
+        $stmt = $connect->prepare("UPDATE bcp_sms3_admin SET Username = ?, password = ? WHERE AccountId = ?");
+        $stmt->bind_param("ss", $Username, $password);
         if ($stmt->execute()) {
             $_SESSION['message'] = 'Account updated successfully!';
         } else {
@@ -36,16 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-if (isset($_POST['AccountId']) && isset($_POST['name']) && isset($_POST['password'])) {
+if (isset($_POST['AccountId']) && isset($_POST['Username']) && isset($_POST['password'])) {
     $AccountId = $_POST['AccountId'];
-    $name = $_POST['name'];
+    $Username = $_POST['Username'];
     $password = $_POST['password'];
 
     // Hash the password before updating it
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $connect->prepare("UPDATE bcp_sms3_admin SET name = ?, password = ? WHERE AccountId = ?");
-    $stmt->bind_param("sss", $name, $hashedPassword, $AccountId);
+    $stmt = $connect->prepare("UPDATE bcp_sms3_admin SET Username = ?, password = ? WHERE AccountId = ?");
+    $stmt->bind_param("ss", $Username, $hashedPassword);
     if ($stmt->execute()) {
         $_SESSION['message'] = 'Account updated successfully!';
     } else {
@@ -56,7 +55,7 @@ if (isset($_POST['AccountId']) && isset($_POST['name']) && isset($_POST['passwor
 
 
 // Fix the SQL query to ensure it fetches AccountId
-$query = "SELECT AccountId, name, password FROM bcp_sms3_admin";  // Added AccountId column explicitly
+$query = "SELECT AccountId, Username, password FROM bcp_sms3_admin";  // Added AccountId column explicitly
 $result = $connect->query($query);
 
 if (!$result) {
@@ -70,7 +69,7 @@ if (!$result) {
 
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="width=device-width, initial-scale=1.0" Username="viewport">
   <title>Admin Log</title>
 
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -83,11 +82,8 @@ if (!$result) {
 <body>
 
 <!-- ======= Header ======= -->
-<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
-<!-- End Header -->
-
-<!-- ======= Sidebar ======= -->  
-<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<?php include('../Prefect/inc/header.php'); ?>
+<?php include('../Prefect/inc/adminsidebar.php'); ?>
 <!-- End Sidebar -->
 
 <main id="main" class="main">
@@ -115,8 +111,7 @@ if (!$result) {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Id Number</th>
-                    <th>Name</th>
+                    <th>Username</th>
                     <th>Password</th>
                     <th>Action</th>
                   </tr>
@@ -130,14 +125,13 @@ if (!$result) {
             ?>
             <tr>
                 <td><?php echo $cnt++; ?></td>
-                <td><?php echo htmlspecialchars($row->AccountId); ?></td>
-                <td><?php echo htmlspecialchars($row->name); ?></td>
+                <td><?php echo htmlspecialchars($row->Username); ?></td>
                 <td><?php echo "*****"; ?></td>
 
                 <td>
                     <!-- Edit Button -->
                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal" 
-                            onclick="loadEditData('<?php echo $row->AccountId; ?>', '<?php echo addslashes($row->name); ?>', '<?php echo addslashes($row->password); ?>')">Edit</button>
+                            onclick="loadEditData( '<?php echo addslashes($row->Username); ?>', '<?php echo addslashes($row->password); ?>')">Edit</button>
                             <form method="POST" style="display:inline-block;" id="deleteForm_<?php echo $row->AccountId; ?>" onsubmit="return confirmDelete(<?php echo $row->AccountId; ?>);">
     <input type="hidden" name="AccountId" value='<?php echo $row->AccountId; ?>'>
     <input type="hidden" name="action" value="delete">
@@ -188,16 +182,12 @@ function confirmDelete(AccountId) {
             <div class="modal-body">
                 <form method="POST" id="editForm">
                     <div class="mb-3">
-                        <label for="editAccountId" class="form-label">Id Number</label>
-                        <input type="text" class="form-control" id="editAccountId" name="AccountId" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editname" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="editname" name="name">
+                        <label for="editUsername" class="form-label">Full Username</label>
+                        <input type="text" class="form-control" id="editUsername" Username="Username">
                     </div>
                     <div class="mb-3">
                         <label for="editpassword" class="form-label">Password</label>
-                        <input type="Password" class="form-control" id="editpassword" name="password">
+                        <input type="Password" class="form-control" id="editpassword" Username="password">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -222,8 +212,8 @@ function confirmDelete(AccountId) {
             </div>
             <div class="modal-footer">
                 <form method="POST" id="deleteForm">
-                    <input type="hidden" name="AccountId" id="deleteAccountId">
-                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" Username="AccountId" id="deleteAccountId">
+                    <input type="hidden" Username="action" value="delete">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
@@ -232,11 +222,10 @@ function confirmDelete(AccountId) {
     </div>
 </div>
 
-<?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+<?php include('../Prefect/inc/footer.php'); ?>
 <script>
-function loadEditData(AccountId, name, password) {
-  document.getElementById('editAccountId').value = AccountId;
-  document.getElementById('editname').value = name;
+function loadEditData(AccountId, Username, password) {
+  document.getElementById('editUsername').value = Username;
   document.getElementById('editpassword').value = password;
 
   // Manually trigger the modal display (for Bootstrap 5)

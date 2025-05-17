@@ -33,9 +33,10 @@
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
   <link href="./assets/css/admin.css" rel="stylesheet">
+  <link href="./assets/css/studentinfo.css" rel="stylesheet">
 </head>
-<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
-<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<?php include('../Prefect/inc/header.php'); ?>
+<?php include('../Prefect/inc/adminsidebar.php'); ?>
 
 <main id="main" class="main">
 <div class="pagetitle">
@@ -55,6 +56,10 @@
 
   <div class="tab-content">
     <div class="tab-pane fade show active" id="senior">
+      <div class="mb-3 mt-3">
+  <input type="text" id="seniorSearch" class="form-control" placeholder="Search Senior High students...">
+</div>
+
       <table class="table">
         <thead><tr><th>Student Number</th><th>Name</th><th>Year</th><th>Course</th><th>Section</th></tr></thead>
         <tbody>
@@ -72,6 +77,10 @@
     </div>
 
     <div class="tab-pane fade" id="college">
+      <div class="mb-3 mt-3">
+  <input type="text" id="collegeSearch" class="form-control" placeholder="Search College students...">
+</div>
+
       <table class="table">
         <thead><tr><th>Student Number</th><th>Name</th><th>Year</th><th>Course</th><th>Section</th></tr></thead>
         <tbody>
@@ -98,9 +107,30 @@
     </section>
 
   </main>
-  <?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+  <?php include('../Prefect/inc/footer.php'); ?>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script>
+  function filterTable(inputId, tableSelector) {
+    const input = document.getElementById(inputId);
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll(tableSelector + " tbody tr");
+
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(filter) ? "" : "none";
+    });
+  }
+
+  document.getElementById("seniorSearch").addEventListener("keyup", function () {
+    filterTable("seniorSearch", "#senior table");
+  });
+
+  document.getElementById("collegeSearch").addEventListener("keyup", function () {
+    filterTable("collegeSearch", "#college table");
+  });
+</script>
 
   <!-- Vendor JS Files -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -7,7 +7,7 @@ check_login();
 $Studentnumber_Id = $Nameid = $yearid = $courseid = $sectionid = $severityid = $offencesid = $evidence_type = $witness_name = $witness_statement = $involve = $penalties = $statement = '';
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addincident'])) {
     $Studentnumber_Id = $_POST['Studentnumber_Id'] ?? '';
     $Nameid = $_POST['Nameid'] ?? '';
     $yearid = $_POST['yearid'] ?? '';
@@ -15,30 +15,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
     $sectionid = $_POST['sectionid'] ?? '';
     $severityid = $_POST['severityid'] ?? '';
     $offencesid = $_POST['offencesid'] ?? '';
+    $evidence_type = $_POST['evidence_type'] ?? '';
     $involve = $_POST['involve'] ?? '';
     $penalties = $_POST['penalties'] ?? '';
     $statement = $_POST['statement'] ?? '';
-    $evidence_type = $_POST['evidence_type'] ?? '';
 
     $category = (in_array($yearid, ['Grade 11', 'Grade 12'])) ? 'Senior High' : 'College';
 
-    // Ensure incident_date is properly set
     $incident_date = $_POST['date_created'] ?? null;
     if (!empty($incident_date)) {
         $incident_date = date('Y-m-d H:i:s', strtotime($incident_date));
     } else {
-        die("Error: Incident Date is required."); // Stop execution if incident_date is missing
+        die("Error: Incident Date is required.");
     }
 
     $witness_name = null;
     $witness_statement = null;
-    
-    if ($evidence_type == "Witness") {
+
+    if ($evidence_type === "Witness") {
         $witness_name = $_POST['witness_name'] ?? '';
         $witness_statement = $_POST['witness_statement'] ?? '';
     }
 
-    if (empty($errors)) {
+    // Check for duplicate incident
+    $checkStmt = $connect->prepare("
+        SELECT * FROM bcp_sms_log 
+        WHERE Studentnumber_Id = ? 
+        AND offencesid = ? 
+        AND incident_date = ?
+    ");
+    if (!$checkStmt) {
+        die("Prepare failed: " . $connect->error);
+    }
+    $checkStmt->bind_param("sss", $Studentnumber_Id, $offencesid, $incident_date);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+
+    if ($checkResult->num_rows > 0) {
+        echo "<script>alert('This incident is already recorded for this student with the same offense and time.');</script>";
+        $checkStmt->close();
+    } else {
+        $checkStmt->close();
+
+        // Proceed with insert
         $stmt = $connect->prepare("INSERT INTO bcp_sms_log 
             (Studentnumber_Id, Nameid, yearid, courseid, sectionid, severityid, offencesid, evidence_type, witness_name, witness_statement, involve, penalties, statement, date_created, incident_date, category) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)");
@@ -48,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
         }
 
         $stmt->bind_param("sssssssssssssss", 
-            $Studentnumber_Id, $Nameid, $yearid, $courseid, $sectionid, $severityid, $offencesid, 
+            $Studentnumber_Id, $Nameid, $yearid, $courseid, $sectionid, $severityid, $offencesid,
             $evidence_type, $witness_name, $witness_statement, $involve, $penalties, $statement, $incident_date, $category);
 
         if (!$stmt->execute()) {
@@ -59,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
         $stmt->close();
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -77,11 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
 <body>
 
 <!-- ======= Header ======= -->
-<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
+<?php include('header.php'); ?>
 <!-- End Header -->
 
 <!-- ======= Sidebar ======= -->  
-<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<?php include('adminsidebar.php'); ?>
 <!-- End Sidebar-->
 
 <main id="main" class="main">
@@ -153,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
             </div>
             <div class="form-group">
                 <label for="adviser_name">Adviser's Name</label>
-                <input type="text" class="form-control" id="adviser_name" name="adviser_name" readonly>
+                <input type="text" class="form-control" id="adviser_name" name="adviser_name" >
             </div>
 
             <h5>Parent Information</h5>
@@ -273,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['addincident'])) {
     </div>
 </main>
 
-<?php include('C:\xampp\htdocs\Prefect\inc\footer.php'); ?>
+<?php include('footer.php'); ?>
 
 <script>
 document.getElementById("Studentnumber_Id").addEventListener("blur", function() {

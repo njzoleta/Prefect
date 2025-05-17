@@ -8,7 +8,6 @@ check_login();
 if (!isset($conn)) {
     die("Database connection failed."); // Ensure connection is established
 }
-
 // Check if ID is provided
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
@@ -19,6 +18,8 @@ if (isset($_GET['id'])) {
     $stmt->execute();
     $result = $stmt->get_result();
     $student = $result->fetch_assoc();
+    
+
 
     if (!$student) {
         echo "No student found!";
@@ -28,6 +29,11 @@ if (isset($_GET['id'])) {
     echo "No ID provided!";
     exit;
 }
+$subjects = explode(',', $student['Subject']);
+$schedules = explode(',', $student['Schedule']);
+$max = max(count($subjects), count($schedules));
+// Get the current data first
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,10 +52,10 @@ if (isset($_GET['id'])) {
 <body>
 
 
-<?php include('C:\xampp\htdocs\Prefect\inc\header.php'); ?>
+<?php include('../Prefect/inc/header.php'); ?>
 
 
-<?php include('C:\xampp\htdocs\Prefect\inc\adminsidebar.php'); ?>
+<?php include('../Prefect/inc/adminsidebar.php'); ?>
 
 <main id="main" class="main">
     <div class="pagetitle">
@@ -80,16 +86,98 @@ if (isset($_GET['id'])) {
                     <li class="list-group-item"><strong>Email:</strong> <?= $student['email_address'] ?></li>
                     <li class="list-group-item"><strong>Contact Number:</strong> <?= $student['contact_number'] ?></li>
                     <li class="list-group-item"><strong>Mother’s Name:</strong> <?= $student['mother_name'] ?></li>
-                    <li class="list-group-item"><strong>Father’s Name:</strong> <?= $student['father_name'] ?></li>
+                    <li class="list-group-item"><strong>Fathers Name:</strong> <?= $student['father_name'] ?></li>
                     <li class="list-group-item"><strong>Guardian’s Name:</strong> <?= $student['guardian_name'] ?></li>
                     <li class="list-group-item"><strong>Guardian Contact:</strong> <?= $student['guardian_contact'] ?></li>
-                    <li class="list-group-item"><strong>Subject:</strong> <?= $student['Subject'] ?></li>
-                    <li class="list-group-item"><strong>Schedule:</strong> <?= $student['Schedule'] ?></li>
-                    <li class="list-group-item"><strong>Severity:</strong> <?= $student['severity'] ?></li>
-                    <li class="list-group-item"><strong>Offence:</strong> <?= $student['offence'] ?></li>
-                    <li class="list-group-item"><strong>Evidence:</strong> <?= $student['evidence'] ?></li>
-                    <li class="list-group-item"><strong>Statement:</strong> <?= $student['statement'] ?></li>
-                    <li class="list-group-item"><strong>Penalties:</strong> <?= $student['penalties'] ?></li>
+                    <div class="card mt-3">
+<?php
+$subjects = explode(',', $student['Subject']);
+$schedules = explode(',', $student['Schedule']);
+$max = max(count($subjects), count($schedules));
+
+
+
+
+?>
+
+<h5 class="mt-4">Subjects and Schedules</h5>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Subject</th>
+      <th>Schedule</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php for ($i = 0; $i < $max; $i++): ?>
+      <tr>
+        <td><?= htmlspecialchars(trim($subjects[$i] ?? '')) ?></td>
+        <td><?= htmlspecialchars(trim($schedules[$i] ?? '')) ?></td>
+      </tr>
+    <?php endfor; ?>
+  </tbody>
+</table>
+
+    <div class="card-header">
+        <h5>Offense Details</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Offense</th>
+                    <th>Evidence</th>
+                    <th>Statement</th>
+                    <th>Penalties</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+     $severities = explode(',', $student['severity']);
+$offences = explode(',', $student['offence']);
+$evidences = explode(',', $student['evidence']);
+$statements = explode(',', $student['statement']);
+$penalties = explode(',', $student['penalties']);
+$dates = explode(',', $student['incident_date']);
+
+// Ensure maximum number of rows
+$max = max(count($severities), count($offences), count($evidences), count($statements), count($penalties), count($dates));
+
+for ($i = 0; $i < $max; $i++) {
+    echo "<tr>";
+    echo "<td>" . ($severities[$i] ?? '') . "</td>";
+    echo "<td>" . ($offences[$i] ?? '') . "</td>";
+
+    // Handle Evidence
+    $evidence = trim($evidences[$i] ?? '');
+    if ($evidence) {
+        if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $evidence)) {
+            echo "<td><img src='uploads/$evidence' alt='Evidence' width='100'></td>";
+        } elseif (preg_match('/\.(pdf)$/i', $evidence)) {
+            echo "<td><a href='uploads/$evidence' target='_blank'>View PDF</a></td>";
+        } elseif (in_array(strtolower($evidence), ['witness', 'cctv'])) {
+            echo "<td><span class='badge bg-info'>" . ucfirst($evidence) . "</span></td>";
+        } else {
+            echo "<td>$evidence</td>";
+        }
+    } else {
+        echo "<td>No Evidence</td>";
+    }
+
+    echo "<td>" . ($statements[$i] ?? '') . "</td>";
+    echo "<td>" . ($penalties[$i] ?? '') . "</td>";
+    echo "<td>" . ($dates[$i] ?? 'N/A') . "</td>";
+    echo "</tr>";
+}
+
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
                 </ul>
             </div>
         </div>

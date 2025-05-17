@@ -1,46 +1,37 @@
 <?php
-session_start();
-include('connect.php'); // Siguraduhin na ito ay tamang path sa database connection mo
+include('connect.php');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $Studentnumber_id = $_POST['Studentnumber_id'];
-    $Nameid = $_POST['Nameid'];
-    $yearid = $_POST['yearid'];
-    $courseid = $_POST['courseid'];
-    $sectionid = $_POST['sectionid'];
-    $severityid = $_POST['severityid'];
-    $offencesid = $_POST['offencesid'];
-    $involve = $_POST['involve'];
-    $penalties = $_POST['penalties'];
-    $Status = $_POST['Status'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['AccountId'])) {
+    $AccountId = $_POST['AccountId'];
+    $name = $_POST['name'];
+    $password = $_POST['password'];
 
-    // Update query
-    $query = "UPDATE bcp_sms_log SET 
-                Nameid = ?, 
-                yearid = ?, 
-                courseid = ?, 
-                sectionid = ?,
-                severityid = ?, 
-                offencesid = ?, 
-                involve = ?, 
-                penalties = ?, 
-                Status = ? 
-              WHERE Studentnumber_id = ?";
+    // Debugging line to check data
+    error_log("Updating AccountId: $AccountId, Name: $name, Password: $password");
 
-    $stmt = $connect->prepare($query);
-    if ($stmt === false) {
-        die('MySQL Error: ' . $connect->error);
-    }
+    // SQL query to update admin data
+    $updateQuery = "UPDATE bcp_sms3_admin SET name = ?, password = ? WHERE AccountId = ?";
 
-    $stmt->bind_param('sssssssssi', $Nameid, $yearid, $courseid,$sectionid ,$severityid, $offencesid, $involve, $penalties, $Status, $Studentnumber_id);
+    // Prepare the statement
+    if ($stmt = $connect->prepare($updateQuery)) {
+        // Bind parameters
+        $stmt->bind_param("ssi", $name, $password, $AccountId);
 
-    if ($stmt->execute()) {
-        echo "Incident updated successfully.";
+        // Execute the statement
+        if ($stmt->execute()) {
+            echo "Admin log updated successfully."; 
+        } else {
+            echo "Error updating admin log: " . $stmt->error; 
+        }
+
+        // Close the statement
+        $stmt->close();
     } else {
-        echo "Error updating incident: " . $stmt->error;
+        echo "Error preparing statement: " . $connect->error; 
     }
-
-    $stmt->close();
-    $connect->close();
+} else {
+    echo "Invalid request."; 
 }
+
+$connect->close();
 ?>

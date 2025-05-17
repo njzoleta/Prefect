@@ -1,40 +1,36 @@
 <?php
-include('connect.php'); // Siguraduhin na tama ang database connection
+include('connect.php');
 
-header('Content-Type: application/json'); // Set JSON response
+header('Content-Type: application/json');
 
-// Check kung may `severity` na pinasa sa request
+// Check and validate severity
 if (!isset($_GET['severity'])) {
     echo json_encode(["error" => "No severity provided"]);
     exit;
 }
 
-$severity = $_GET['severity']; // Kunin ang severity na pinasa
-
-// Piliin ang tamang table batay sa severity
-$table = "";
-$code_column = "";
-$desc_column = "";
-
-if ($severity === "Minor") {
-    $table = "bcp_sms3_minor";
-    $code_column = "minorcode";
-    $desc_column = "minor";
-} elseif ($severity === "Major") {
-    $table = "bcp_sms3_major";
-    $code_column = "majorcode";
-    $desc_column = "major";
-} elseif ($severity === "Grave") {
-    $table = "bcp_sms3_grave";
-    $code_column = "gravecode";
-    $desc_column = "grave";
-} else {
+$severity = $_GET['severity'];
+$valid_severities = ["Minor", "Major", "Grave"];
+if (!in_array($severity, $valid_severities)) {
     echo json_encode(["error" => "Invalid severity"]);
     exit;
 }
 
-// Query para kunin ang data
-$query = "SELECT $code_column AS code, $desc_column AS description FROM $table";
+// Map table and column names based on severity
+$table_map = [
+    "Minor" => ["table" => "bcp_sms3_minor", "code" => "minorcode", "desc" => "minor"],
+    "Major" => ["table" => "bcp_sms3_major", "code" => "majorcode", "desc" => "major"],
+    "Grave" => ["table" => "bcp_sms3_grave", "code" => "gravecode", "desc" => "grave"]
+];
+
+$table_info = $table_map[$severity];
+$table = $table_info['table'];
+$code_col = $table_info['code'];
+$desc_col = $table_info['desc'];
+
+// Compose raw query (safe because table/columns are from validated mapping)
+$query = "SELECT $code_col AS code, $desc_col AS description FROM $table";
+
 $result = $connect->query($query);
 
 if (!$result) {
